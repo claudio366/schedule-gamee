@@ -1,0 +1,703 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070a12"><title>Schedule</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#eef2f7;--mu:#9aa7bd;--ok:#4fe3a0;--line:rgba(255,255,255,.12);--k:#4fe3a0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:radial-gradient(110% 60% at 50% 0,#1d2f52 0,#0b1020 60%,#070a12 100%) fixed #070a12;color:var(--ink);font:500 15px/1.35 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100dvh;padding:calc(10px + env(safe-area-inset-top)) 14px calc(36px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#app{max-width:480px;margin:0 auto}
+/* fondo vivo */
+.orb{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:-1;animation:orb 20s ease-in-out infinite alternate}
+.o1{width:300px;height:300px;background:#3b6bff;top:-90px;left:-90px;opacity:.38}
+.o2{width:260px;height:260px;background:#a046ff;bottom:-70px;right:-90px;opacity:.32;animation-delay:-7s}
+.o3{width:200px;height:200px;background:#17d6a0;top:48%;left:62%;opacity:.16;animation-delay:-13s}
+@keyframes orb{to{transform:translate(50px,70px) scale(1.18)}}
+/* cabecera */
+.hd{display:flex;justify-content:space-between;align-items:center;gap:10px}
+h1{font-size:26px;margin:4px 0 0;letter-spacing:5px;font-weight:800;background:linear-gradient(90deg,#fff 10%,#9db8ff 55%,#c9a0ff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(130,160,255,.35))}
+.sub{letter-spacing:2px;text-transform:uppercase;font-size:11px;font-weight:700;color:var(--mu)}
+.ib{display:flex;gap:8px}.ib button{width:42px;height:42px;padding:0;font-size:18px;border-radius:50%}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:24px;padding:14px;margin:12px 0;box-shadow:0 12px 36px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08)}
+.mu{color:var(--mu);font-size:13px}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top{display:flex;gap:10px}.top .card{flex:1;margin:12px 0 6px;padding:10px 14px}.top b{display:block;font-size:24px;font-weight:800;transform-origin:left center}
+.bp{animation:bp .38s ease-out}@keyframes bp{40%{transform:scale(1.18);color:#ffd45e}}
+.pills{display:flex;flex-wrap:wrap;gap:6px}.pills:empty{display:none}.pills span{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);animation:pin .3s ease-out}
+.pills .bad{background:rgba(255,90,70,.16);border-color:rgba(255,120,100,.4);color:#ffb4a8}.pills .good{background:rgba(79,227,160,.16);border-color:rgba(79,227,160,.4);color:#9bf5cb}
+@keyframes pin{from{transform:scale(.85);opacity:0}}
+/* botones */
+button{font:inherit;font-weight:700;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:11px 14px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:transform .1s,filter .2s,opacity .2s;position:relative;overflow:hidden}
+button::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);transform:translateX(-120%);transition:transform .5s}
+button:not(:disabled):active::after{transform:translateX(120%);transition:0s}
+button:active{transform:scale(.93)}button:disabled{opacity:.4;cursor:not-allowed}
+.g{background:linear-gradient(#3fe39a,#1a9b62);border-color:rgba(120,255,190,.4);box-shadow:0 6px 20px -4px rgba(40,210,140,.55)}
+.y{background:linear-gradient(#ffd45e,#f2a60f);color:#3a2300;border-color:rgba(255,230,140,.6);box-shadow:0 6px 20px -4px rgba(255,180,40,.5)}
+.bad{background:linear-gradient(#ff7a62,#c9382a);border-color:rgba(255,150,130,.5)}
+.dim{opacity:.5}
+.btns{margin-top:10px}.btns button{flex:1;padding:11px 6px;font-size:14px}
+.chips{display:flex;gap:8px;margin-top:8px}.chips span{font-size:12px;color:var(--mu);background:rgba(0,0,0,.25);padding:4px 10px;border-radius:999px}.chips b{color:#fff}
+/* barras */
+.bar{height:8px;background:rgba(0,0,0,.38);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .5s;position:relative;overflow:hidden;border-radius:6px}
+.bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:translateX(-100%);animation:shm 1.8s linear infinite}
+@keyframes shm{to{transform:translateX(100%)}}
+#ht{background:linear-gradient(90deg,#ffd45e,#ff6b3d,#ff2d55)}
+.hot #ht{box-shadow:0 0 14px #ff2d55}.hot{animation:hotp 1s ease-in-out infinite alternate}@keyframes hotp{to{border-color:rgba(255,70,90,.7)}}
+/* laboratorio animado (estilo GIF) */
+#scn{background:radial-gradient(120% 90% at 50% 0,rgba(255,255,255,.09),rgba(0,0,0,.3));border-radius:18px;border:1px solid var(--line);padding:6px 6px 0;transition:box-shadow .6s}
+#scn svg{display:block;width:100%;max-height:190px;margin:auto;opacity:.72;transition:opacity .5s}
+#sc.on #scn svg{opacity:1}
+#sc.proc #scn{box-shadow:0 0 42px -8px var(--k),inset 0 0 34px -12px var(--k)}
+#lv{transition:transform 1s linear}
+.lq{fill:var(--k)}.w{transform-box:view-box}
+.bb{opacity:0;fill:rgba(255,255,255,.85);transform-box:fill-box;transform-origin:center}
+.au{fill:var(--k);opacity:0;transform-box:fill-box;transform-origin:center}
+.stm{fill:rgba(255,255,255,.6);opacity:0;transform-box:fill-box;transform-origin:center}
+.fm{fill:#ff8a1f;opacity:0;transform-box:fill-box;transform-origin:50% 100%}.fm2{fill:#ffe27a;opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.sp{fill:#fff;opacity:0;transform-box:fill-box;transform-origin:center}
+.tb{fill:var(--k);transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.35)}
+.gr,.orbt{transform-box:view-box}
+.gl{fill:var(--k)}.pipe{fill:none;stroke:var(--k);stroke-width:3;stroke-linecap:round;stroke-dasharray:4 7;opacity:0}
+#sc.on .w1{animation:sl1 2.6s linear infinite}#sc.on .w2{animation:sl2 3.8s linear infinite}
+#sc.on .bb{animation:up 2.4s ease-in infinite}
+#sc.proc .au{animation:aur 2.2s ease-in-out infinite}
+#sc.proc .stm{animation:stm 2.4s ease-out infinite}
+#sc.proc .fm,#sc.proc .fm2{opacity:1;animation:flk .45s ease-in-out infinite alternate}
+#sc.proc .gr{animation:spin 6s linear infinite}#sc.proc .gr.r2{animation:spinr 4s linear infinite}
+#sc.proc .orbt{animation:spin 3.2s linear infinite}
+#sc.proc .tb{animation:fill 2.6s ease-in-out infinite alternate}
+#sc.proc .sp{animation:tw 1.8s ease-in-out infinite}
+#sc.proc .pipe{opacity:.9;animation:flow 1s linear infinite}
+@keyframes sl1{to{transform:translateX(-60px)}}@keyframes sl2{from{transform:translateX(-60px)}to{transform:translateX(0)}}
+@keyframes up{0%{transform:translateY(0);opacity:0}20%{opacity:.9}100%{transform:translateY(-34px);opacity:0}}
+@keyframes aur{0%,100%{opacity:.08;transform:scale(.9)}50%{opacity:.28;transform:scale(1.1)}}
+@keyframes stm{0%{transform:translate(0,6px) scale(.5);opacity:0}30%{opacity:.65}100%{transform:translate(var(--dx,6px),-34px) scale(1.9);opacity:0}}
+@keyframes flk{from{transform:scale(1,1)}to{transform:scale(.88,1.18)}}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes fill{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+@keyframes tw{0%,100%{transform:scale(.2);opacity:0}50%{transform:scale(1.2);opacity:1}}
+@keyframes flow{to{stroke-dashoffset:-22}}
+.st{font-size:13px;font-weight:700;color:var(--mu)}#sc.proc .st{color:var(--k)}
+.dots i{display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;margin-left:3px;animation:dt 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dt{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+/* toast y efectos */
+#tt{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:rgba(18,24,42,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);color:#fff;padding:10px 16px;border-radius:16px;opacity:0;transition:opacity .2s,transform .25s;pointer-events:none;max-width:90%;text-align:center;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.45)}#tt.on{opacity:1;transform:translate(-50%,0)}
+.rp{position:fixed;width:12px;height:12px;border-radius:50%;border:2px solid rgba(160,190,255,.9);box-shadow:0 0 14px rgba(120,160,255,.7),inset 0 0 8px rgba(120,160,255,.4);pointer-events:none;z-index:40;animation:rp .7s ease-out both}
+.rp.r2{animation-delay:.09s;border-color:rgba(255,255,255,.7)}
+@keyframes rp{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(-50%,-50%) scale(8);opacity:0}}
+.pp{position:fixed;border-radius:50%;pointer-events:none;z-index:40;width:6px;height:6px}
+.cn{background:none!important;box-shadow:none!important;font-size:17px;width:auto;height:auto}
+.ft{position:fixed;font-weight:800;font-size:20px;pointer-events:none;z-index:45;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+#fl{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:0;background:radial-gradient(circle,transparent 30%,rgba(255,40,70,.55))}
+#fl.on{animation:fls .7s ease-out}@keyframes fls{from{opacity:1}to{opacity:0}}
+.shk{animation:shk .5s}@keyframes shk{10%,50%,90%{transform:translateX(-7px)}30%,70%{transform:translateX(7px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+[hidden]{display:none!important}
+body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+#tt{bottom:calc(92px + env(safe-area-inset-bottom))}
+svg.ic{vertical-align:-3px;flex:none}
+button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.hd{justify-content:flex-start;gap:12px}.ttl{min-width:0}
+.ib{width:44px;height:44px;padding:0;border-radius:50%;flex:none}
+.ib2{width:36px;height:36px;padding:0;border-radius:50%}
+.top .mu{display:flex;align-items:center;gap:6px}
+.cn{width:15px!important;height:15px!important;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff1a8,#f2a60f 70%)!important;border:2px solid #fff3c4;box-shadow:0 0 10px rgba(255,200,60,.8)!important}
+.card b{display:inline-flex;align-items:center;gap:6px}
+.top b{display:block}
+/* nav */
+#nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom));width:min(456px,calc(100% - 24px));display:flex;gap:6px;padding:6px;border-radius:24px;background:rgba(14,20,38,.8);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:30}
+#nav button{flex:1;flex-direction:column;gap:3px;padding:9px 4px;border-radius:18px;background:none;border:0;font-size:11px;color:var(--mu)}
+#nav button.on{background:linear-gradient(160deg,rgba(108,140,255,.38),rgba(176,108,255,.26));color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+/* tutorial */
+.tut{border-color:rgba(130,160,255,.45);background:linear-gradient(160deg,rgba(108,140,255,.18),rgba(176,108,255,.08))}
+.dots2{display:flex;gap:5px}.dots2 i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)}.dots2 i.on{background:#9db8ff;box-shadow:0 0 8px #9db8ff}
+/* ajustes */
+#sheet{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,6,14,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+#sheet.on{opacity:1;pointer-events:auto}
+.panel{width:min(480px,100%);max-height:88dvh;overflow:auto;background:linear-gradient(170deg,#19233c,#0e1527);border:1px solid var(--line);border-radius:28px 28px 0 0;padding:16px 16px calc(22px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+#sheet.on .panel{transform:none}
+.set{padding:13px 0;border-top:1px solid var(--line);margin-top:12px}.set:first-of-type{margin-top:8px}
+.lb{display:flex;align-items:center;gap:8px;font-weight:700}
+.sw{width:52px;height:30px;padding:0;border-radius:999px;background:rgba(255,255,255,.14);flex:none}
+.sw::before{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw::after{display:none}
+.sw.on{background:linear-gradient(#3fe39a,#1a9b62)}.sw.on::before{transform:translateX(22px)}
+input[type=range]{width:100%;accent-color:#7b9cff;margin:10px 0 0}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.seg button{flex:1 1 30%}.seg button.on{background:linear-gradient(160deg,#6c8cff,#a46cff);border-color:transparent}
+/* ruleta */
+.wheelw{position:relative;width:min(330px,88%);margin:6px auto 4px;filter:drop-shadow(0 14px 30px rgba(0,0,0,.5))}
+.wheelw svg{display:block;width:100%}
+#wrot{transform-box:view-box}
+.led{fill:#fff;animation:led 1s ease-in-out infinite alternate}.led:nth-child(even){animation-delay:.5s}
+@keyframes led{from{opacity:.35}to{opacity:1}}
+.spinning .led{animation-duration:.25s}
+.prize{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(0,0,0,.25);margin-top:10px}
+/* airdrop */
+.big{font-size:34px;font-weight:800;background:linear-gradient(90deg,#ffe27a,#ffb02e);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+.days{display:flex;gap:6px;margin:10px 0}.days div{flex:1;aspect-ratio:1;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--mu)}
+.days div.on{background:linear-gradient(160deg,#3fe39a,#1a9b62);color:#fff;border-color:transparent;box-shadow:0 4px 14px -4px rgba(40,210,140,.6)}.days div.gf{border-color:rgba(255,212,94,.6);color:#ffd45e}
+.tr{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.tr:first-of-type{border-top:0}
+.ti{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex:none;color:#9db8ff}
+.tx{flex:1;min-width:0}.tx b{display:block}.tx .mu{display:block;font-size:12px}
+.tr button{padding:8px 13px;font-size:13px;flex:none}
+.dn{display:inline-flex;align-items:center;gap:4px;color:var(--ok);font-weight:700;font-size:13px;flex:none}
+.lnk{font-size:12px;word-break:break-all;background:rgba(0,0,0,.28);padding:8px 10px;border-radius:12px;margin-top:8px;color:#bcd0ff}
+/* anuncio */
+#adv{position:fixed;inset:0;z-index:90;background:rgba(3,6,14,.94);display:none;align-items:center;justify-content:center;padding:24px}#adv.on{display:flex}
+.abox{width:min(340px,100%);text-align:center;background:linear-gradient(170deg,#1a2442,#0e1527);border:1px solid var(--line);border-radius:26px;padding:24px 20px;display:flex;flex-direction:column;gap:12px;align-items:center;position:relative}
+.abdg{position:absolute;top:12px;right:14px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:8px;background:rgba(255,255,255,.12);color:var(--mu)}
+.aico{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#6c8cff,#a46cff);box-shadow:0 0 30px rgba(130,150,255,.5)}
+.aprog{width:100%;height:8px;border-radius:6px;background:rgba(0,0,0,.4);overflow:hidden}.aprog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6c8cff,#a46cff);transition:width 1s linear}
+.pills .good,.pills .bad{display:inline-flex;align-items:center;gap:5px}
+.qs{margin-top:10px}.qc{display:flex;align-items:center;gap:6px;margin-top:6px}.qc button{flex:1;padding:8px 4px;font-size:13px}.qc b{flex:1.4;justify-content:center;font-size:15px}
+</style></head><body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div id="fl"></div>
+<div id="app">
+<div class="hd"><button class="ib" id="gb" onclick="openSet()" data-ic="gear" data-sz="22"></button><div class="ttl"><h1>SCHEDULE</h1><div class="sub" data-i="sub"></div></div></div>
+<div class="mu" style="margin-top:6px" data-i="intro"></div>
+<div class="top"><div class="card"><span class="mu"><span data-ic="coins" style="color:#ffd45e"></span><span data-i="coins"></span></span><b id="co"></b></div><div class="card"><span class="mu"><span data-ic="star" style="color:#c9a0ff"></span><span data-i="points"></span></span><b id="pt"></b></div></div>
+<div class="pills" id="ev"></div>
+
+<section id="v1">
+<div id="tu"></div>
+<div class="card" id="sc">
+<div id="scn"><svg viewBox="0 0 320 176" role="img" aria-label="Laboratorio animado">
+<defs>
+<clipPath id="cp"><path d="M45 22h30v28l25 50a8 8 0 0 1-7 12H27a8 8 0 0 1-7-12l25-50z"/></clipPath>
+<linearGradient id="shn" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+</defs>
+<line x1="8" y1="170" x2="312" y2="170" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-linecap="round"/>
+<circle class="au" cx="78" cy="84" r="66"/>
+<!-- quemador y llamas -->
+<rect x="50" y="158" width="56" height="10" rx="5" fill="#52607a"/>
+<g transform="translate(64,0)"><path class="fm" d="M0 158c-8-9-5-17 0-25 5 8 8 16 0 25z"/><path class="fm2" d="M0 158c-4-5-3-9 0-13 3 4 4 8 0 13z"/></g>
+<g transform="translate(78,0)"><path class="fm" style="animation-delay:.12s" d="M0 158c-9-10-6-20 0-30 6 10 9 20 0 30z"/><path class="fm2" style="animation-delay:.12s" d="M0 158c-5-6-3-11 0-16 3 5 5 10 0 16z"/></g>
+<g transform="translate(92,0)"><path class="fm" style="animation-delay:.24s" d="M0 158c-8-9-5-17 0-25 5 8 8 16 0 25z"/><path class="fm2" style="animation-delay:.24s" d="M0 158c-4-5-3-9 0-13 3 4 4 8 0 13z"/></g>
+<!-- matraz -->
+<g transform="translate(18,22)">
+<g clip-path="url(#cp)"><g id="lv" style="transform:translateY(96px)">
+<g class="w w1"><path class="lq" d="M0 0q15-7 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V90H0z"/></g>
+<g class="w w2"><path class="lq" opacity=".5" transform="translate(-15,4)" d="M0 0q15-7 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V90H0z"/></g>
+<circle class="bb" cx="46" cy="40" r="3.5"/><circle class="bb" style="animation-delay:.5s" cx="60" cy="46" r="2.5"/><circle class="bb" style="animation-delay:1s" cx="72" cy="38" r="4"/><circle class="bb" style="animation-delay:1.5s" cx="54" cy="30" r="2.5"/><circle class="bb" style="animation-delay:.8s" cx="66" cy="44" r="3"/><circle class="bb" style="animation-delay:1.9s" cx="50" cy="48" r="2"/>
+</g></g>
+<path d="M45 22h30v28l25 50a8 8 0 0 1-7 12H27a8 8 0 0 1-7-12l25-50z" fill="url(#shn)" stroke="#cfe3ff" stroke-width="3" stroke-linejoin="round"/>
+<rect x="40" y="15" width="40" height="8" rx="3" fill="#cfe3ff"/>
+<circle class="stm" style="--dx:-8px" cx="54" cy="8" r="4"/><circle class="stm" style="--dx:4px;animation-delay:.8s" cx="62" cy="6" r="5"/><circle class="stm" style="--dx:10px;animation-delay:1.6s" cx="68" cy="8" r="4"/>
+</g>
+<!-- tuberia -->
+<path class="pipe" d="M114 96C150 96 160 104 187 120"/>
+<!-- engranajes -->
+<g class="gr" style="transform-origin:232px 62px"><circle cx="232" cy="62" r="30" fill="none" stroke="#7f93b8" stroke-width="9" stroke-dasharray="9.42 9.42"/><circle cx="232" cy="62" r="24" fill="#1b2540" stroke="#9fb4d6" stroke-width="3"/><path d="M232 40v44M210 62h44M216 46l32 32M248 46l-32 32" stroke="#9fb4d6" stroke-width="2.5" opacity=".7"/><circle class="gl" cx="232" cy="62" r="7"/></g>
+<g class="gr r2" style="transform-origin:270px 100px"><circle cx="270" cy="100" r="16" fill="none" stroke="#7f93b8" stroke-width="6" stroke-dasharray="6.28 6.28"/><circle cx="270" cy="100" r="12" fill="#1b2540" stroke="#9fb4d6" stroke-width="2.5"/><circle class="gl" cx="270" cy="100" r="4"/></g>
+<g class="orbt" style="transform-origin:232px 62px"><circle class="gl" cx="274" cy="62" r="3.2"/><circle class="gl" cx="211" cy="98.4" r="3.2"/><circle class="gl" cx="211" cy="25.6" r="3.2"/></g>
+<!-- tubos de ensayo -->
+<g><rect class="tb" style="animation-delay:0s" x="182" y="138" width="10" height="26" rx="5"/><rect class="tb" style="animation-delay:.5s" x="206" y="138" width="10" height="26" rx="5"/><rect class="tb" style="animation-delay:1s" x="230" y="138" width="10" height="26" rx="5"/>
+<rect x="180" y="124" width="14" height="42" rx="7" fill="none" stroke="#cfe3ff" stroke-width="2"/><rect x="204" y="124" width="14" height="42" rx="7" fill="none" stroke="#cfe3ff" stroke-width="2"/><rect x="228" y="124" width="14" height="42" rx="7" fill="none" stroke="#cfe3ff" stroke-width="2"/>
+<rect x="174" y="140" width="74" height="4" rx="2" fill="#52607a"/></g>
+<!-- destellos -->
+<g transform="translate(138,34)"><path class="sp" d="M0-6L1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z"/></g>
+<g transform="translate(150,150)"><path class="sp" style="animation-delay:.6s" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4z"/></g>
+<g transform="translate(300,48)"><path class="sp" style="animation-delay:1.1s" d="M0-6L1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z"/></g>
+<g transform="translate(168,92)"><path class="sp" style="animation-delay:.3s" d="M0-4L1.1-1.1 4 0 1.1 1.1 0 4-1.1 1.1-4 0-1.1-1.1z"/></g>
+</svg></div>
+<div class="row" style="margin-top:10px"><div><b><span data-ic="flask"></span><span data-i="lab"></span></b> <span class="mu" id="sl"></span></div><span class="st" id="sct"></span></div>
+<div id="jb"></div></div>
+<div class="card" id="hc"><div class="row"><b><span data-ic="flame" style="color:#ff7a45"></span><span data-i="heat"></span></b><span class="mu" id="rk"></span></div><div class="bar"><i id="ht"></i></div><div class="mu" id="rn" style="margin-top:6px"></div></div>
+<div id="bst"></div>
+<div id="ps"></div><div id="up"></div>
+</section>
+
+<section id="v2" hidden>
+<div class="card"><div style="font-size:20px;font-weight:800" id="rt"></div><div class="mu" id="rs"></div>
+<div class="wheelw" id="ww"><svg viewBox="-112 -112 224 224"><circle r="108" fill="rgba(255,255,255,.05)"/><g id="wrot" style="transform-origin:0px 0px"><g id="wh"></g></g><g id="rim"></g><circle r="17" fill="#0e1527" stroke="#ffd45e" stroke-width="3"/><circle r="6" fill="#ffd45e"/><path d="M-10 -111L10 -111 0 -88z" fill="#fff" stroke="#ffd45e" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+<div id="rb"></div></div>
+</section>
+
+<section id="v3" hidden><div id="aw"></div></section>
+</div>
+<nav id="nav"></nav>
+<div id="sheet" onclick="if(event.target===this)closeSet()"><div class="panel" id="pn"></div></div>
+<div id="adv"></div>
+<div id="tt"></div>
+<script>
+var _dn=Date.now,OFF=0;Date.now=function(){return _dn.call(Date)+OFF};
+var $=function(i){return document.getElementById(i)},KEY="schedule_v1",RENT=150000;
+/* ===== CONFIGURACIÓN: rellena estos datos para activar anuncios, invitaciones y tareas ===== */
+var CFG={
+ BOT:"",      /* usuario de tu bot de Telegram, sin @ (para el enlace de invitación) */
+ APP:"",      /* nombre corto de tu Mini App en BotFather (opcional) */
+ CHANNEL:"",  /* enlace a tu canal: https://t.me/tucanal */
+ X:"",        /* enlace a tu cuenta de X/Twitter */
+ BACKEND:"",  /* URL de tu servidor (ver server.js), ej. https://api.tudominio.com */
+ ADSGRAM:""   /* tu blockId de Adsgram (ej. "int-1234"). Vacío = anuncio de prueba */
+};
+if(CFG.ADSGRAM){var ads=document.createElement("script");ads.src="https://sad.adsgram.ai/js/sad.min.js";document.head.appendChild(ads)}
+/* ===== Iconos (trazo, estilo moderno) ===== */
+var IC={
+gear:"<path d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'/><circle cx='12' cy='12' r='3'/>",
+volume:"<path d='M11 5 6 9H2v6h4l5 4V5z'/><path d='M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14'/>",
+music:"<path d='M9 18V5l12-2v13'/><circle cx='6' cy='18' r='3'/><circle cx='18' cy='16' r='3'/>",
+bell:"<path d='M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0'/>",
+phone:"<rect x='6' y='2' width='12' height='20' rx='3'/><path d='M11 18h2'/>",
+coins:"<circle cx='8' cy='8' r='6'/><path d='M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82'/>",
+star:"<path d='m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z'/>",
+flame:"<path d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.4 1-3 0 1.7 1 3 2.5 3z'/>",
+home:"<path d='m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/><path d='M9 22V12h6v10'/>",
+flask:"<path d='M10 2v7.5L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2M8.5 2h7M7 16h10'/>",
+box:"<path d='m7.5 4.3 9 5.2M21 8v8a2 2 0 0 1-1 1.7l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.7l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8zM3.3 7 12 12l8.7-5M12 22V12'/>",
+check:"<path d='M20 6 9 17l-5-5'/>",
+lock:"<rect x='3' y='11' width='18' height='11' rx='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/>",
+factory:"<path d='M2 21h20M4 21V10l5 3v-3l5 3V4h6v17'/>",
+shield:"<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/>",
+gift:"<rect x='3' y='8' width='18' height='4' rx='1'/><path d='M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5'/>",
+wheel:"<circle cx='12' cy='12' r='10'/><circle cx='12' cy='12' r='2'/><path d='M12 2v8M12 14v8M2 12h8M14 12h8M4.9 4.9l5.7 5.7M13.4 13.4l5.7 5.7M19.1 4.9l-5.7 5.7M10.6 13.4l-5.7 5.7'/>",
+play:"<circle cx='12' cy='12' r='10'/><path d='m10 8 6 4-6 4z'/>",
+users:"<path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'/>",
+cal:"<rect x='3' y='4' width='18' height='18' rx='2'/><path d='M16 2v4M8 2v4M3 10h18m-11 5 2 2 4-4'/>",
+link:"<path d='M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/>",
+zap:"<path d='M13 2 3 14h9l-1 8 10-12h-9z'/>",
+crown:"<path d='m2 6 5 5 5-8 5 8 5-5-2 13H4z'/>",
+x:"<path d='M18 6 6 18M6 6l12 12'/>",
+globe:"<circle cx='12' cy='12' r='10'/><path d='M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20'/>",
+book:"<path d='M4 19.5V4a2 2 0 0 1 2-2h14v17H6a2 2 0 0 0 0 4h14'/>",
+gem:"<path d='M6 3h12l4 6-10 13L2 9z'/><path d='M11 3 8 9l4 13 4-13-3-6M2 9h20'/>",
+clock:"<circle cx='12' cy='12' r='10'/><path d='M12 6v6l4 2'/>",
+copy:"<rect x='9' y='9' width='13' height='13' rx='2'/><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/>",
+send:"<path d='m22 2-7 20-4-9-9-4zM22 2 11 13'/>"
+};
+function I(n,z,st){return "<svg class='ic' width='"+(z||18)+"' height='"+(z||18)+"' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'"+(st?" style='"+st+"'":"")+">"+IC[n]+"</svg>"}
+/* ===== Idiomas ===== */
+var T={es:{
+sub:"Crea · Procesa · Vende",intro:"El calor, el alquiler y las redadas no perdonan. Juego de ficción con productos inventados.",coins:"Monedas",points:"Puntos",lab:"Laboratorio",heat:"Calor",
+slots:"{0} / {1} espacios",st_proc:"Procesando {0} lote(s)",st_make:"Creando...",st_idle:"En reposo",j_make:"creando",j_proc:"procesando",
+risk:"Riesgo de redada: {0}%",rentin:"Alquiler −{0} en {1}",worth:"vale {0} c/u",locked:"Se desbloquea al ganar {0} monedas en total",toproc:"Por procesar",ready:"Listo",
+make:"Crear · {0}",process:"Procesar",sell:"Vender",upg:"Mejoras",spaces:"Espacios ({0}/8)",security:"Seguridad ({0}/5)",max:"Máximo",upnote:"Más espacios = más alquiler. Redadas sufridas: {0}",
+boost_t:"Impulso ×2",boost_d:"Mira un anuncio y gana el doble por 2 minutos.",boost_btn:"Ver anuncio",boost_on:"×2 activo · {0}",boost_cd:"Disponible en {0}",
+e_slots:"Todos tus espacios están ocupados",e_coins:"Te faltan monedas",e_noraw:"No tienes producto por procesar",e_noready:"No tienes producto listo",
+raid:"¡Redada! Perdiste todo el producto listo{0} y {1} monedas",raid_x:" y un lote en curso",shield:"¡Tu escudo bloqueó la redada!",
+sold:"Vendiste {0} por {1}{2}",vip_tag:" (VIP ×1,4)",d_make:"{0} creada",d_proc:"{0} lista para vender",
+ev_patrol:"Patrulla en el barrio: sube el calor",ev_sat:"Mercado saturado: {0} cae un 40%",ev_cost:"Proveedor caro: crear cuesta +50% durante 90 s",ev_vip:"Cliente VIP: {0} se paga ×1,4 durante 60 s",
+pl_cost:"Proveedor caro +50% · {0}",pl_vip:"VIP {0} ×1,4 · {1}",pl_sh:"Escudo activo",
+rent_ok:"Alquiler del laboratorio: −{0}",rent_no:"No pudiste pagar el alquiler: el casero sospecha (+calor)",loan:"Un amigo te prestó 30 monedas",
+upgraded:"Mejorado",procfx:"Procesando",
+n_game:"Juego",n_wheel:"Ruleta",n_air:"Airdrop",
+s_title:"Ajustes",s_lang:"Idioma",s_music:"Música",s_sfx:"Efectos de sonido",s_vib:"Vibración",s_tut:"Mostrar tutorial",s_close:"Cerrar",
+tu_step:"Paso {0} de {1}",tu_next:"Siguiente",tu_skip:"Omitir",tu_done:"¡Entendido!",
+tu_1_t:"Crea",tu_1:"Pulsa Crear para fabricar producto. Cada lote ocupa un espacio del laboratorio.",
+tu_2_t:"Procesa",tu_2:"Cuando termine, pulsa Procesar para refinarlo y dejarlo listo para vender.",
+tu_3_t:"Vende",tu_3:"Vende con cuidado: cada venta sube el calor y con él el riesgo de redada.",
+tu_4_t:"Sobrevive",tu_4:"Paga el alquiler a tiempo y mejora Seguridad y Espacios para crecer.",
+tu_5_t:"Gana más",tu_5:"Gira la ruleta y completa tareas del Airdrop para conseguir puntos.",
+r_title:"Ruleta de la suerte",r_sub:"Gira para ganar monedas, puntos y ventajas.",r_free:"Girar gratis",r_wait:"Gratis en {0}",r_ad:"Ver anuncio y girar ({0})",r_noad:"Sin giros por anuncio hoy",r_last:"Último premio",r_hint:"Giro gratis cada 8 h. Los premios son solo del juego.",
+p_c1:"+{0} monedas",p_c2:"+{0} monedas",p_jk:"¡JACKPOT! +{0} monedas",p_pt:"+{0} puntos",p_cl:"Calor −40",p_vp:"Cliente VIP: {0} ×1,4 durante 90 s",p_sh:"Escudo: bloquea la próxima redada",p_no:"Sin premio, ¡suerte la próxima!",
+a_title:"Airdrop",a_sub:"Completa tareas diarias e invita amigos para ganar puntos.",a_pts:"Tus puntos",a_streak:"Check-in diario",a_claim:"Reclamar",a_done:"Hecho",a_cin:"Reclamar día {0}",a_back:"Vuelve mañana",
+a_daily:"Tareas diarias",a_once:"Tareas únicas",t_ad:"Ver un anuncio ({0}/3)",t_sold:"Vender 400 monedas hoy",t_spin:"Girar la ruleta 1 vez",t_proc:"Procesar 3 lotes",t_ch:"Unirse al canal",t_x:"Seguir en X",go:"Ir",
+rw_pts:"+{0} puntos",rw_both:"+{0} monedas · +{1} puntos",a_inv:"Invita amigos",a_inv_d:"Gana puntos por cada hito de amigos invitados.",a_invited:"Invitados: {0}",a_share:"Invitar",a_copy:"Copiar",a_copied:"Enlace copiado",a_nolink:"Enlace de invitación sin configurar todavía",a_m:"Invita a {0} amigo(s)",a_text:"¡Únete a Schedule y gana puntos!",
+a_redt:"Canjear por USDT",a_note:"Tus puntos se registran, pero el canje a USDT aún no está disponible: hace falta un servidor y fondos para pagar. Los puntos no tienen valor en dinero garantizado.",a_red:"Canjear USDT (próximamente)",
+welcome:"Bonus de bienvenida: +100 monedas",tapm:"Toca la pantalla para activar la música",
+ad_title:"Anuncio de prueba",ad_demo:"Aquí se mostrará un anuncio real cuando configures tu red publicitaria.",ad_wait:"Recompensa en {0} s",ad_close:"Reclamar recompensa",ad_skip:"Cerrar sin recompensa",ad_fail:"No hay anuncio disponible ahora",ad_none:"Anuncio no completado: sin recompensa",
+got_c:"+{0} monedas",got_p:"+{0} puntos",wait:"Espera unos segundos..."
+},en:{
+sub:"Create · Process · Sell",intro:"Heat, rent and raids show no mercy. A fiction game with made-up products.",coins:"Coins",points:"Points",lab:"Lab",heat:"Heat",
+slots:"{0} / {1} slots",st_proc:"Processing {0} batch(es)",st_make:"Creating...",st_idle:"Idle",j_make:"creating",j_proc:"processing",
+risk:"Raid risk: {0}%",rentin:"Rent −{0} in {1}",worth:"worth {0} each",locked:"Unlocks after earning {0} coins in total",toproc:"To process",ready:"Ready",
+make:"Create · {0}",process:"Process",sell:"Sell",upg:"Upgrades",spaces:"Slots ({0}/8)",security:"Security ({0}/5)",max:"Max",upnote:"More slots = more rent. Raids suffered: {0}",
+boost_t:"×2 Boost",boost_d:"Watch an ad and earn double for 2 minutes.",boost_btn:"Watch ad",boost_on:"×2 active · {0}",boost_cd:"Available in {0}",
+e_slots:"All your slots are busy",e_coins:"Not enough coins",e_noraw:"Nothing to process",e_noready:"Nothing ready to sell",
+raid:"Raid! You lost all ready product{0} and {1} coins",raid_x:", a batch in progress",shield:"Your shield blocked the raid!",
+sold:"Sold {0} for {1}{2}",vip_tag:" (VIP ×1.4)",d_make:"{0} created",d_proc:"{0} ready to sell",
+ev_patrol:"Patrol in the neighborhood: heat rises",ev_sat:"Saturated market: {0} drops 40%",ev_cost:"Pricey supplier: creating costs +50% for 90 s",ev_vip:"VIP client: {0} pays ×1.4 for 60 s",
+pl_cost:"Pricey supplier +50% · {0}",pl_vip:"VIP {0} ×1.4 · {1}",pl_sh:"Shield active",
+rent_ok:"Lab rent: −{0}",rent_no:"You couldn't pay the rent: the landlord gets suspicious (+heat)",loan:"A friend lent you 30 coins",
+upgraded:"Upgraded",procfx:"Processing",
+n_game:"Game",n_wheel:"Wheel",n_air:"Airdrop",
+s_title:"Settings",s_lang:"Language",s_music:"Music",s_sfx:"Sound effects",s_vib:"Vibration",s_tut:"Show tutorial",s_close:"Close",
+tu_step:"Step {0} of {1}",tu_next:"Next",tu_skip:"Skip",tu_done:"Got it!",
+tu_1_t:"Create",tu_1:"Tap Create to make product. Each batch uses one lab slot.",
+tu_2_t:"Process",tu_2:"When it's done, tap Process to refine it and get it ready to sell.",
+tu_3_t:"Sell",tu_3:"Sell carefully: every sale raises the heat, and with it the raid risk.",
+tu_4_t:"Survive",tu_4:"Pay rent on time and upgrade Security and Slots to grow.",
+tu_5_t:"Earn more",tu_5:"Spin the wheel and complete Airdrop tasks to earn points.",
+r_title:"Lucky wheel",r_sub:"Spin to win coins, points and perks.",r_free:"Spin for free",r_wait:"Free in {0}",r_ad:"Watch ad & spin ({0})",r_noad:"No ad spins left today",r_last:"Last prize",r_hint:"Free spin every 8 h. Prizes are in-game only.",
+p_c1:"+{0} coins",p_c2:"+{0} coins",p_jk:"JACKPOT! +{0} coins",p_pt:"+{0} points",p_cl:"Heat −40",p_vp:"VIP client: {0} ×1.4 for 90 s",p_sh:"Shield: blocks the next raid",p_no:"No prize, better luck next time!",
+a_title:"Airdrop",a_sub:"Complete daily tasks and invite friends to earn points.",a_pts:"Your points",a_streak:"Daily check-in",a_claim:"Claim",a_done:"Done",a_cin:"Claim day {0}",a_back:"Come back tomorrow",
+a_daily:"Daily tasks",a_once:"One-time tasks",t_ad:"Watch an ad ({0}/3)",t_sold:"Sell 400 coins today",t_spin:"Spin the wheel once",t_proc:"Process 3 batches",t_ch:"Join the channel",t_x:"Follow on X",go:"Go",
+rw_pts:"+{0} points",rw_both:"+{0} coins · +{1} points",a_inv:"Invite friends",a_inv_d:"Earn points for each invited-friends milestone.",a_invited:"Invited: {0}",a_share:"Invite",a_copy:"Copy",a_copied:"Link copied",a_nolink:"Invite link not configured yet",a_m:"Invite {0} friend(s)",a_text:"Join Schedule and earn points!",
+a_redt:"Redeem for USDT",a_note:"Your points are recorded, but redeeming for USDT isn't available yet: it needs a server and funds to pay out. Points have no guaranteed cash value.",a_red:"Redeem USDT (coming soon)",
+welcome:"Welcome bonus: +100 coins",tapm:"Tap the screen to turn on the music",
+ad_title:"Test ad",ad_demo:"A real ad will appear here once you set up your ad network.",ad_wait:"Reward in {0} s",ad_close:"Claim reward",ad_skip:"Close without reward",ad_fail:"No ad available right now",ad_none:"Ad not completed: no reward",
+got_c:"+{0} coins",got_p:"+{0} points",wait:"Wait a few seconds..."
+}};
+T.es.srv_err="Sin conexión con el servidor";T.en.srv_err="No connection to the server";
+T.pt=Object.assign({},T.es,{
+sub:"Crie · Processe · Venda",intro:"O calor, o aluguel e as batidas não perdoam. Jogo de ficção com produtos inventados.",coins:"Moedas",points:"Pontos",lab:"Laboratório",heat:"Calor",
+slots:"{0} / {1} espaços",st_proc:"Processando {0} lote(s)",st_make:"Criando...",st_idle:"Em repouso",j_make:"criando",j_proc:"processando",
+risk:"Risco de batida: {0}%",rentin:"Aluguel −{0} em {1}",worth:"vale {0} cada",locked:"Desbloqueia ao ganhar {0} moedas no total",toproc:"A processar",ready:"Pronto",
+make:"Criar · {0}",process:"Processar",sell:"Vender",upg:"Melhorias",spaces:"Espaços ({0}/8)",security:"Segurança ({0}/5)",max:"Máximo",upnote:"Mais espaços = mais aluguel. Batidas sofridas: {0}",
+boost_t:"Impulso ×2",boost_d:"Veja um anúncio e ganhe o dobro por 2 minutos.",boost_btn:"Ver anúncio",boost_on:"×2 ativo · {0}",boost_cd:"Disponível em {0}",
+e_slots:"Todos os seus espaços estão ocupados",e_coins:"Faltam moedas",e_noraw:"Nada para processar",e_noready:"Nada pronto para vender",
+raid:"Batida! Você perdeu todo o produto pronto{0} e {1} moedas",raid_x:" e um lote em andamento",shield:"Seu escudo bloqueou a batida!",
+sold:"Vendeu {0} por {1}{2}",vip_tag:" (VIP ×1,4)",d_make:"{0} criada",d_proc:"{0} pronta para vender",
+ev_patrol:"Patrulha no bairro: o calor sobe",ev_sat:"Mercado saturado: {0} cai 40%",ev_cost:"Fornecedor caro: criar custa +50% por 90 s",ev_vip:"Cliente VIP: {0} paga ×1,4 por 60 s",
+pl_cost:"Fornecedor caro +50% · {0}",pl_vip:"VIP {0} ×1,4 · {1}",pl_sh:"Escudo ativo",
+rent_ok:"Aluguel do laboratório: −{0}",rent_no:"Você não conseguiu pagar o aluguel: o senhorio desconfia (+calor)",loan:"Um amigo te emprestou 30 moedas",
+upgraded:"Melhorado",procfx:"Processando",
+n_game:"Jogo",n_wheel:"Roleta",n_air:"Airdrop",
+s_title:"Ajustes",s_lang:"Idioma",s_music:"Música",s_sfx:"Efeitos sonoros",s_vib:"Vibração",s_tut:"Mostrar tutorial",s_close:"Fechar",
+tu_step:"Passo {0} de {1}",tu_next:"Seguinte",tu_skip:"Pular",tu_done:"Entendi!",
+tu_1_t:"Crie",tu_1:"Toque em Criar para fabricar produto. Cada lote ocupa um espaço do laboratório.",
+tu_2_t:"Processe",tu_2:"Quando terminar, toque em Processar para refiná-lo e deixá-lo pronto para vender.",
+tu_3_t:"Venda",tu_3:"Venda com cuidado: cada venda aumenta o calor e, com ele, o risco de batida.",
+tu_4_t:"Sobreviva",tu_4:"Pague o aluguel em dia e melhore Segurança e Espaços para crescer.",
+tu_5_t:"Ganhe mais",tu_5:"Gire a roleta e complete tarefas do Airdrop para ganhar pontos.",
+r_title:"Roleta da sorte",r_sub:"Gire para ganhar moedas, pontos e vantagens.",r_free:"Girar grátis",r_wait:"Grátis em {0}",r_ad:"Ver anúncio e girar ({0})",r_noad:"Sem giros por anúncio hoje",r_last:"Último prêmio",r_hint:"Giro grátis a cada 8 h. Os prêmios são só do jogo.",
+p_c1:"+{0} moedas",p_c2:"+{0} moedas",p_jk:"JACKPOT! +{0} moedas",p_pt:"+{0} pontos",p_cl:"Calor −40",p_vp:"Cliente VIP: {0} ×1,4 por 90 s",p_sh:"Escudo: bloqueia a próxima batida",p_no:"Sem prêmio, mais sorte na próxima!",
+a_title:"Airdrop",a_sub:"Complete tarefas diárias e convide amigos para ganhar pontos.",a_pts:"Seus pontos",a_streak:"Check-in diário",a_claim:"Resgatar",a_done:"Feito",a_cin:"Resgatar dia {0}",a_back:"Volte amanhã",
+a_daily:"Tarefas diárias",a_once:"Tarefas únicas",t_ad:"Ver um anúncio ({0}/3)",t_sold:"Vender 400 moedas hoje",t_spin:"Girar a roleta 1 vez",t_proc:"Processar 3 lotes",t_ch:"Entrar no canal",t_x:"Seguir no X",go:"Ir",
+rw_pts:"+{0} pontos",rw_both:"+{0} moedas · +{1} pontos",a_inv:"Convide amigos",a_inv_d:"Ganhe pontos a cada marco de amigos convidados.",a_invited:"Convidados: {0}",a_share:"Convidar",a_copy:"Copiar",a_copied:"Link copiado",a_nolink:"Link de convite ainda não configurado",a_m:"Convide {0} amigo(s)",a_text:"Entre no Schedule e ganhe pontos!",
+a_redt:"Trocar por USDT",a_note:"Seus pontos são registrados, mas a troca por USDT ainda não está disponível: é preciso um servidor e fundos para pagar. Os pontos não têm valor em dinheiro garantido.",a_red:"Trocar USDT (em breve)",
+welcome:"Bônus de boas-vindas: +100 moedas",tapm:"Toque na tela para ativar a música",
+ad_title:"Anúncio de teste",ad_demo:"Um anúncio real será exibido aqui quando você configurar sua rede de anúncios.",ad_wait:"Recompensa em {0} s",ad_close:"Resgatar recompensa",ad_skip:"Fechar sem recompensa",ad_fail:"Nenhum anúncio disponível agora",ad_none:"Anúncio não concluído: sem recompensa",
+got_c:"+{0} moedas",got_p:"+{0} pontos",wait:"Aguarde alguns segundos...",srv_err:"Sem conexão com o servidor"});
+T.fr=Object.assign({},T.es,{
+sub:"Crée · Traite · Vends",intro:"La chaleur, le loyer et les descentes ne pardonnent pas. Jeu de fiction avec des produits inventés.",coins:"Pièces",points:"Points",lab:"Laboratoire",heat:"Chaleur",
+slots:"{0} / {1} emplacements",st_proc:"Traitement de {0} lot(s)",st_make:"Création...",st_idle:"Au repos",j_make:"création",j_proc:"traitement",
+risk:"Risque de descente : {0}%",rentin:"Loyer −{0} dans {1}",worth:"vaut {0} pièce",locked:"Se débloque après {0} pièces gagnées au total",toproc:"À traiter",ready:"Prêt",
+make:"Créer · {0}",process:"Traiter",sell:"Vendre",upg:"Améliorations",spaces:"Emplacements ({0}/8)",security:"Sécurité ({0}/5)",max:"Max",upnote:"Plus d'emplacements = plus de loyer. Descentes subies : {0}",
+boost_t:"Boost ×2",boost_d:"Regarde une pub et gagne le double pendant 2 minutes.",boost_btn:"Voir la pub",boost_on:"×2 actif · {0}",boost_cd:"Disponible dans {0}",
+e_slots:"Tous tes emplacements sont occupés",e_coins:"Pas assez de pièces",e_noraw:"Rien à traiter",e_noready:"Rien de prêt à vendre",
+raid:"Descente ! Tu as perdu tout le produit prêt{0} et {1} pièces",raid_x:" et un lot en cours",shield:"Ton bouclier a bloqué la descente !",
+sold:"Vendu {0} pour {1}{2}",vip_tag:" (VIP ×1,4)",d_make:"{0} créée",d_proc:"{0} prête à vendre",
+ev_patrol:"Patrouille dans le quartier : la chaleur monte",ev_sat:"Marché saturé : {0} baisse de 40%",ev_cost:"Fournisseur cher : créer coûte +50% pendant 90 s",ev_vip:"Client VIP : {0} paie ×1,4 pendant 60 s",
+pl_cost:"Fournisseur cher +50% · {0}",pl_vip:"VIP {0} ×1,4 · {1}",pl_sh:"Bouclier actif",
+rent_ok:"Loyer du laboratoire : −{0}",rent_no:"Tu n'as pas pu payer le loyer : le propriétaire se méfie (+chaleur)",loan:"Un ami t'a prêté 30 pièces",
+upgraded:"Amélioré",procfx:"Traitement",
+n_game:"Jeu",n_wheel:"Roue",n_air:"Airdrop",
+s_title:"Réglages",s_lang:"Langue",s_music:"Musique",s_sfx:"Effets sonores",s_vib:"Vibration",s_tut:"Afficher le tutoriel",s_close:"Fermer",
+tu_step:"Étape {0} sur {1}",tu_next:"Suivant",tu_skip:"Passer",tu_done:"Compris !",
+tu_1_t:"Crée",tu_1:"Appuie sur Créer pour fabriquer du produit. Chaque lot occupe un emplacement du labo.",
+tu_2_t:"Traite",tu_2:"Une fois fini, appuie sur Traiter pour l'affiner et le rendre prêt à vendre.",
+tu_3_t:"Vends",tu_3:"Vends avec prudence : chaque vente augmente la chaleur, et donc le risque de descente.",
+tu_4_t:"Survis",tu_4:"Paie le loyer à temps et améliore Sécurité et Emplacements pour grandir.",
+tu_5_t:"Gagne plus",tu_5:"Tourne la roue et termine les tâches Airdrop pour gagner des points.",
+r_title:"Roue de la chance",r_sub:"Tourne pour gagner des pièces, des points et des avantages.",r_free:"Tourner gratuitement",r_wait:"Gratuit dans {0}",r_ad:"Voir une pub et tourner ({0})",r_noad:"Plus de tours par pub aujourd'hui",r_last:"Dernier gain",r_hint:"Tour gratuit toutes les 8 h. Les gains ne valent que dans le jeu.",
+p_c1:"+{0} pièces",p_c2:"+{0} pièces",p_jk:"JACKPOT ! +{0} pièces",p_pt:"+{0} points",p_cl:"Chaleur −40",p_vp:"Client VIP : {0} ×1,4 pendant 90 s",p_sh:"Bouclier : bloque la prochaine descente",p_no:"Rien gagné, plus de chance la prochaine fois !",
+a_title:"Airdrop",a_sub:"Termine des tâches quotidiennes et invite des amis pour gagner des points.",a_pts:"Tes points",a_streak:"Check-in quotidien",a_claim:"Récupérer",a_done:"Fait",a_cin:"Récupérer le jour {0}",a_back:"Reviens demain",
+a_daily:"Tâches quotidiennes",a_once:"Tâches uniques",t_ad:"Voir une pub ({0}/3)",t_sold:"Vendre 400 pièces aujourd'hui",t_spin:"Tourner la roue 1 fois",t_proc:"Traiter 3 lots",t_ch:"Rejoindre le canal",t_x:"Suivre sur X",go:"Aller",
+rw_pts:"+{0} points",rw_both:"+{0} pièces · +{1} points",a_inv:"Invite des amis",a_inv_d:"Gagne des points à chaque palier d'amis invités.",a_invited:"Invités : {0}",a_share:"Inviter",a_copy:"Copier",a_copied:"Lien copié",a_nolink:"Lien d'invitation pas encore configuré",a_m:"Invite {0} ami(s)",a_text:"Rejoins Schedule et gagne des points !",
+a_redt:"Échanger contre des USDT",a_note:"Tes points sont enregistrés, mais l'échange contre des USDT n'est pas encore disponible : il faut un serveur et des fonds pour payer. Les points n'ont pas de valeur monétaire garantie.",a_red:"Échanger USDT (bientôt)",
+welcome:"Bonus de bienvenue : +100 pièces",tapm:"Touche l'écran pour activer la musique",
+ad_title:"Pub de test",ad_demo:"Une vraie pub s'affichera ici quand tu auras configuré ton réseau publicitaire.",ad_wait:"Récompense dans {0} s",ad_close:"Récupérer la récompense",ad_skip:"Fermer sans récompense",ad_fail:"Aucune pub disponible pour le moment",ad_none:"Pub non terminée : pas de récompense",
+got_c:"+{0} pièces",got_p:"+{0} points",wait:"Patiente quelques secondes...",srv_err:"Pas de connexion au serveur"});
+T.ru=Object.assign({},T.es,{
+sub:"Создавай · Обрабатывай · Продавай",intro:"Жара, аренда и облавы не прощают. Вымышленная игра с придуманными продуктами.",coins:"Монеты",points:"Очки",lab:"Лаборатория",heat:"Жара",
+slots:"{0} / {1} мест",st_proc:"Обработка: {0} парт.",st_make:"Создание...",st_idle:"Простой",j_make:"создание",j_proc:"обработка",
+risk:"Риск облавы: {0}%",rentin:"Аренда −{0} через {1}",worth:"стоит {0} за шт.",locked:"Откроется после заработка {0} монет",toproc:"К обработке",ready:"Готово",
+make:"Создать · {0}",process:"Обработать",sell:"Продать",upg:"Улучшения",spaces:"Места ({0}/8)",security:"Охрана ({0}/5)",max:"Макс.",upnote:"Больше мест = больше аренда. Облав пережито: {0}",
+boost_t:"Буст ×2",boost_d:"Посмотри рекламу и зарабатывай вдвое больше в течение 2 минут.",boost_btn:"Смотреть рекламу",boost_on:"×2 активен · {0}",boost_cd:"Доступно через {0}",
+e_slots:"Все места заняты",e_coins:"Не хватает монет",e_noraw:"Нечего обрабатывать",e_noready:"Нет готового товара",
+raid:"Облава! Ты потерял весь готовый товар{0} и {1} монет",raid_x:" и партию в работе",shield:"Щит отразил облаву!",
+sold:"Продано {0} за {1}{2}",vip_tag:" (VIP ×1,4)",d_make:"{0} создана",d_proc:"{0} готова к продаже",
+ev_patrol:"Патруль в районе: жара растёт",ev_sat:"Рынок перенасыщен: {0} падает на 40%",ev_cost:"Дорогой поставщик: создание +50% на 90 с",ev_vip:"VIP-клиент: {0} платит ×1,4 на 60 с",
+pl_cost:"Дорогой поставщик +50% · {0}",pl_vip:"VIP {0} ×1,4 · {1}",pl_sh:"Щит активен",
+rent_ok:"Аренда лаборатории: −{0}",rent_no:"Ты не смог оплатить аренду: хозяин подозревает (+жара)",loan:"Друг одолжил тебе 30 монет",
+upgraded:"Улучшено",procfx:"Обработка",
+n_game:"Игра",n_wheel:"Рулетка",n_air:"Airdrop",
+s_title:"Настройки",s_lang:"Язык",s_music:"Музыка",s_sfx:"Звуковые эффекты",s_vib:"Вибрация",s_tut:"Показывать обучение",s_close:"Закрыть",
+tu_step:"Шаг {0} из {1}",tu_next:"Далее",tu_skip:"Пропустить",tu_done:"Понятно!",
+tu_1_t:"Создавай",tu_1:"Нажми «Создать», чтобы произвести продукт. Каждая партия занимает одно место в лаборатории.",
+tu_2_t:"Обрабатывай",tu_2:"Когда закончится, нажми «Обработать», чтобы довести продукт до продажи.",
+tu_3_t:"Продавай",tu_3:"Продавай осторожно: каждая продажа повышает жару, а с ней и риск облавы.",
+tu_4_t:"Выживай",tu_4:"Вовремя плати аренду и улучшай Охрану и Места, чтобы расти.",
+tu_5_t:"Зарабатывай больше",tu_5:"Крути рулетку и выполняй задания Airdrop, чтобы получать очки.",
+r_title:"Рулетка удачи",r_sub:"Крути и выигрывай монеты, очки и бонусы.",r_free:"Крутить бесплатно",r_wait:"Бесплатно через {0}",r_ad:"Реклама и вращение ({0})",r_noad:"Вращений за рекламу больше нет",r_last:"Последний приз",r_hint:"Бесплатное вращение каждые 8 ч. Призы только внутри игры.",
+p_c1:"+{0} монет",p_c2:"+{0} монет",p_jk:"ДЖЕКПОТ! +{0} монет",p_pt:"+{0} очков",p_cl:"Жара −40",p_vp:"VIP-клиент: {0} ×1,4 на 90 с",p_sh:"Щит: блокирует следующую облаву",p_no:"Без приза, повезёт в следующий раз!",
+a_title:"Airdrop",a_sub:"Выполняй ежедневные задания и приглашай друзей, чтобы получать очки.",a_pts:"Твои очки",a_streak:"Ежедневный чек-ин",a_claim:"Забрать",a_done:"Готово",a_cin:"Забрать день {0}",a_back:"Приходи завтра",
+a_daily:"Ежедневные задания",a_once:"Разовые задания",t_ad:"Посмотреть рекламу ({0}/3)",t_sold:"Продать на 400 монет сегодня",t_spin:"Крутнуть рулетку 1 раз",t_proc:"Обработать 3 партии",t_ch:"Вступить в канал",t_x:"Подписаться в X",go:"Перейти",
+rw_pts:"+{0} очков",rw_both:"+{0} монет · +{1} очков",a_inv:"Приглашай друзей",a_inv_d:"Получай очки за каждый рубеж приглашённых друзей.",a_invited:"Приглашено: {0}",a_share:"Пригласить",a_copy:"Копировать",a_copied:"Ссылка скопирована",a_nolink:"Ссылка-приглашение ещё не настроена",a_m:"Пригласи друзей: {0}",a_text:"Заходи в Schedule и зарабатывай очки!",
+a_redt:"Обмен на USDT",a_note:"Твои очки сохраняются, но обмен на USDT пока недоступен: нужны сервер и средства для выплат. Очки не имеют гарантированной денежной стоимости.",a_red:"Обменять USDT (скоро)",
+welcome:"Приветственный бонус: +100 монет",tapm:"Коснись экрана, чтобы включить музыку",
+ad_title:"Тестовая реклама",ad_demo:"Здесь появится настоящая реклама, когда ты настроишь рекламную сеть.",ad_wait:"Награда через {0} с",ad_close:"Забрать награду",ad_skip:"Закрыть без награды",ad_fail:"Сейчас нет доступной рекламы",ad_none:"Реклама не досмотрена: награды нет",
+got_c:"+{0} монет",got_p:"+{0} очков",wait:"Подожди несколько секунд...",srv_err:"Нет связи с сервером"});
+var SQ=[null,null,null];
+function qty(p){var m=s.rd[p];if(!m)return 0;var q=SQ[p];return q==null?m:Math.max(1,Math.min(m,q))}
+function setQ(p,d){var m=s.rd[p];if(!m)return;SQ[p]=Math.max(1,Math.min(m,qty(p)+d));draw()}
+function allQ(p){SQ[p]=null;draw()}
+function qsel(p){var m=s.rd[p];if(m<2)return "";var q=qty(p),a=function(l,d,off){return "<button onclick='setQ("+p+","+d+")'"+(off?" disabled":"")+">"+l+"</button>"};
+ return "<div class='qs'><span class='mu'>"+t("qty")+"</span><div class='qc'>"+a("−5",-5,q<=1)+a("−1",-1,q<=1)+"<b>"+q+" / "+m+"</b>"+a("+1",1,q>=m)+a("+5",5,q>=m)+"<button onclick='allQ("+p+")'"+(q>=m?" disabled":"")+">"+t("all")+"</button></div></div>"}
+T.es.qty="Cantidad a vender";T.es.all="Todo";T.en.qty="Amount to sell";T.en.all="All";T.pt.qty="Quantidade a vender";T.pt.all="Tudo";T.fr.qty="Quantité à vendre";T.fr.all="Tout";T.ru.qty="Сколько продать";T.ru.all="Все";
+var LG=[["es","Español"],["en","English"],["pt","Português"],["ru","Русский"],["fr","Français"]];
+function api(p,b,cb){try{b=b||{};b.initData=(TG&&TG.initData)||"";fetch(CFG.BACKEND+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()}).then(cb).catch(function(){cb(null)})}catch(e){cb(null)}}
+function srvSync(){if(SRV)return S("sync");if(!CFG.BACKEND||!(TG&&TG.initData))return;api("/api/me",{},function(r){if(r&&typeof r.inv=="number"){s.inv=r.inv;(r.claimed||[]).forEach(function(c){s.dn[c]=1});draw()}})}
+var P=[{n:"Azulita",k:"#4aa8ff",c:20,t1:10,t2:8,v:55,u:0},{n:"Neonia",k:"#4fe3a0",c:90,t1:30,t2:20,v:260,u:600},{n:"Rosita",k:"#c07bff",c:400,t1:90,t2:60,v:1250,u:6000}];
+function pad(n){return n<10?"0"+n:""+n}
+function ds(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function newDt(){return {ci:0,ad:0,sold:0,sp:0,sa:0,pr:0,c:{}}}
+var D={co:200,pt:0,sl:2,sg:0,cr:[0,0,0],rd:[0,0,0],jb:[],tot:0,raids:0,ht:0,mp:[1,1,1],rn:Date.now()+RENT,cx:0,vp:-1,vu:0,nx:Date.now()+70000,t:Date.now(),
+ lg:"",ms:0,mv:1,sm:0,sv:1,vb:1,tu:1,ts:0,sp:0,wr:0,bo:0,bc:0,sh:0,dk:"",dt:newDt(),sk:0,lc:"",dn:{},rdy:{},inv:0,ref:"",uid:"",lp:null,t0:Date.now()};
+var s=JSON.parse(JSON.stringify(D));try{var sv=localStorage.getItem(KEY);if(sv)s=Object.assign(s,JSON.parse(sv))}catch(e){}
+var TG=window.Telegram&&Telegram.WebApp;
+/* ===== Modo servidor: el servidor valida y manda el estado ===== */
+var SRV=!!(CFG.BACKEND&&TG&&TG.initData),busyU=0,SPV=-1,pend=null;
+function merge(x){for(var k in x)s[k]=x[k]}
+function evs(ev){(ev||[]).forEach(function(e){var k=e.k;
+ if(k=="rent_ok")toast(t("rent_ok",fmt(e.a)));else if(k=="rent_no"){toast(t("rent_no"));sfx("err")}
+ else if(k=="loan"||k=="welcome"||k=="ev_cost")toast(t(k));
+ else if(k=="ev_patrol"){toast(t(k));hap("err");sfx("ev")}else if(k=="ev_sat"||k=="ev_vip")toast(t(k,e.n))})}
+function fb(r){evs(r.ev);var x=r.r||{},k=x.k;
+ if(k=="sold"){toast((x.shield?t("shield")+" · ":"")+t("sold",x.n,fmt(x.g),x.vip?t("vip_tag"):""));sfx("coin");hap("ok");fx("+"+fmt(x.g),"#7dffb8");coins(LX,LY,Math.min(14,6+x.n))}
+ else if(k=="raid"){toast(t("raid",x.x?t("raid_x"):"",fmt(x.f)));shake();flash();sfx("raid");hap("err");fx("−"+fmt(x.f),"#ff6b6b")}
+ else if(k=="crear"){sfx("pop");fx("−"+fmt(x.c),"#ffb4a8")}
+ else if(k=="procesar"){sfx("pop");fx(t("procfx"),P[x.p].k);spark(LX,LY,10,50,[P[x.p].k,"#fff"])}
+ else if(k=="upg"){sfx("up");hap("ok");spark(LX,LY,18,80,["#ffd45e","#fff","#ffb02e"]);fx(t("upgraded"),"#ffd45e")}
+ else if(k=="give")give(x.co||0,x.pt||0);else if(k=="boost"){sfx("up");hap("ok")}}
+function S(a,b,cb,rt){var n=_dn.call(Date);if(busyU>n){if(a!="sync")setTimeout(function(){S(a,b,cb,rt)},150);return}
+ busyU=n+8000;b=b||{};b.a=a;api("/api/act",b,function(r){busyU=0;if(r&&r.now)OFF=r.now-_dn.call(Date);
+  if(!r||!r.ok){if(r&&r.msg=="ad_none"&&rt>0)return setTimeout(function(){S(a,b,cb,rt-1)},2000);
+   if(r&&r.s){merge(r.s);evs(r.ev)}if(a!="sync")err(t(r&&r.msg?r.msg:"srv_err"));draw();return}
+  merge(r.s);if(cb)cb(r);else fb(r);draw()})}
+function spinSrv(ad,rt){if(spinning)return;api("/api/act",{a:"spin",ad:ad?1:0},function(r){if(r&&r.now)OFF=r.now-_dn.call(Date);
+ if(!r||!r.ok){if(r&&r.msg=="ad_none"&&rt>0)return setTimeout(function(){spinSrv(ad,rt-1)},2000);if(r&&r.s){merge(r.s);draw()}return err(t(r&&r.msg?r.msg:"srv_err"))}
+ pend=r.s;SPV=r.r.vp;evs(r.ev);go2(ad,r.r.i)})}
+if(!s.lg){var lc="";try{lc=(TG&&TG.initDataUnsafe&&TG.initDataUnsafe.user&&TG.initDataUnsafe.user.language_code)||""}catch(e){}lc=lc||navigator.language||"es";var m2=(lc||"").slice(0,2).toLowerCase();s.lg=T[m2]?m2:"en"}
+var LX=innerWidth/2,LY=innerHeight/2,pk="",cv=1,spinning=false,lr=0;
+function L(){return T[s.lg]?s.lg:"en"}
+function t(k){var v=(T[L()]&&T[L()][k])||T.es[k]||k,a=arguments;return v.replace(/\{(\d)\}/g,function(m,i){return a[+i+1]!=null?a[+i+1]:""})}
+function fmt(n){return Math.floor(n).toLocaleString(L())}
+function toast(m){var e=$("tt");e.textContent=m;e.classList.add("on");clearTimeout(e._h);e._h=setTimeout(function(){e.classList.remove("on")},2600)}
+function err(m){toast(m);sfx("err");hap("err")}
+function save(){s.t=Date.now();try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+function ft(x){x=Math.max(0,Math.ceil(x));return x<60?x+" s":Math.floor(x/60)+" min "+x%60+" s"}
+function free(){return s.sl-s.jb.length}
+/* Dificultad */
+function risk(){return Math.max(.04,Math.min(.7,.08+s.ht/200-.035*s.sg))}
+function rent(){return 20*s.sl*s.sl}
+function cost(p){return Math.round(P[p].c*(s.cx>Date.now()?1.5:1))}
+function vipm(p){return s.vp==p&&s.vu>Date.now()?1.4:1}
+function price(p){return P[p].v*s.mp[p]*vipm(p)*(s.bo>Date.now()?2:1)}
+function RM(){return window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches}
+function bump(id,v){var e=$(id),x=fmt(v);if(e.textContent!==x){e.textContent=x;if(e._v!=null){e.classList.remove("bp");void e.offsetWidth;e.classList.add("bp")}}e._v=v}
+function chk(){if(SRV)return false;var d=ds(new Date());if(s.dk!==d){s.dk=d;s.dt=newDt();return true}return false}
+function give(co,pt){if(!SRV){s.co+=co;s.pt+=pt}var m=[];if(co)m.push(t("got_c",fmt(co)));if(pt)m.push(t("got_p",fmt(pt)));toast(m.join(" · "));sfx("coin");hap("ok");fx(m.join("  "),"#ffe27a");spark(LX,LY,14,70,["#ffd45e","#fff"]);draw()}
+
+function crear(p){if(SRV)return S("crear",{p:p});var q=P[p],c=cost(p);if(free()<1)return err(t("e_slots"));if(s.co<c)return err(t("e_coins"));s.co-=c;s.jb.push({p:p,st:1,end:Date.now()+q.t1*1000});sfx("pop");fx("−"+fmt(c),"#ffb4a8");draw()}
+function procesar(p){if(SRV)return S("procesar",{p:p});if(s.cr[p]<1)return err(t("e_noraw"));if(free()<1)return err(t("e_slots"));chk();s.dt.pr++;s.cr[p]--;s.jb.push({p:p,st:2,end:Date.now()+P[p].t2*1000});sfx("pop");fx(t("procfx"),P[p].k);spark(LX,LY,10,50,[P[p].k,"#fff"]);draw()}
+function vender(p){if(SRV){var q0=qty(p);SQ[p]=null;return S("vender",{p:p,n:q0})}var h=s.rd[p];if(h<1)return err(t("e_noready"));var n=qty(p);s.rd[p]=h-n;SQ[p]=null;var rc=risk(),raid=Math.random()<rc;s.ht=Math.min(100,s.ht+Math.min(50,10+n*3.5));
+ if(raid&&s.sh){s.sh=0;raid=false;toast(t("shield"));sfx("up");hap("ok")}
+ if(raid){s.raids++;var f=Math.round(Math.min(s.co,40+s.tot*.07)),x="";s.co-=f;s.rd=[0,0,0];s.ht=Math.max(0,s.ht-30);
+  if(s.jb.length&&Math.random()<.4){s.jb.splice(Math.floor(Math.random()*s.jb.length),1);x=t("raid_x")}
+  toast(t("raid",x,fmt(f)));shake();flash();sfx("raid");hap("err");fx("−"+fmt(f),"#ff6b6b")}
+ else{var g=Math.round(n*price(p)*(.85+Math.random()*.3));s.mp[p]=Math.max(.35,s.mp[p]*Math.pow(.92,n));s.co+=g;s.tot+=g;s.pt+=Math.floor(g/10);chk();s.dt.sold+=g;
+  toast(t("sold",n,fmt(g),vipm(p)>1?t("vip_tag"):""));sfx("coin");hap("ok");fx("+"+fmt(g),"#7dffb8");coins(LX,LY,Math.min(14,6+n))}draw()}
+function ucost(k){return k=="sl"?Math.round(180*Math.pow(2.3,s.sl-2)):Math.round(300*Math.pow(2.6,s.sg))}
+function mejora(k){if(SRV)return S("mejora",{k:k});if((k=="sl"&&s.sl>=8)||(k=="sg"&&s.sg>=5))return;var c=ucost(k);if(s.co<c)return err(t("e_coins"));s.co-=c;s[k]++;sfx("up");hap("ok");spark(LX,LY,18,80,["#ffd45e","#fff","#ffb02e"]);fx(t("upgraded"),"#ffd45e");draw()}
+function done(){var n=Date.now(),ch=false,m=[];for(var i=s.jb.length-1;i>=0;i--){var j=s.jb[i];if(j.end>n)continue;s.jb.splice(i,1);if(j.st==1){s.cr[j.p]++;m.push(t("d_make",P[j.p].n))}else{s.rd[j.p]++;m.push(t("d_proc",P[j.p].n))}ch=true}
+ if(m.length){toast(m.slice(0,2).join(" · "));sfx("done");hap("ok")}return ch}
+function unl(){return [0,1,2].filter(function(i){return s.tot>=P[i].u})}
+function evento(){var n=Date.now(),un=unl(),r=Math.random(),p=un[Math.floor(Math.random()*un.length)];
+ if(r<.3){s.ht=Math.min(100,s.ht+20);toast(t("ev_patrol"));hap("err")}
+ else if(r<.55){s.mp[p]=Math.max(.35,s.mp[p]*.6);toast(t("ev_sat",P[p].n))}
+ else if(r<.75){s.cx=n+90000;toast(t("ev_cost"))}
+ else{s.vp=p;s.vu=n+60000;toast(t("ev_vip",P[p].n))}
+ sfx("ev")}
+function econ(dt){if(SRV){s.ht=Math.max(0,s.ht-.28*dt);for(var i=0;i<3;i++)s.mp[i]=Math.min(1,s.mp[i]+.003*dt);return false}s.ht=Math.max(0,s.ht-.28*dt);for(var i=0;i<3;i++)s.mp[i]=Math.min(1,s.mp[i]+.003*dt);var n=Date.now(),ch=false;if(s.rn<n-600000)s.rn=n-600000;
+ while(s.rn<=n){s.rn+=RENT;var r=rent(),pd=Math.min(s.co,r);s.co-=pd;ch=true;if(pd<r){s.ht=Math.min(100,s.ht+12);toast(t("rent_no"));sfx("err")}else toast(t("rent_ok",fmt(r)))}
+ if(n>=s.nx){s.nx=n+60000+Math.random()*60000;evento();ch=true}
+ if(s.co<30&&!s.jb.length&&!s.cr[0]&&!s.cr[1]&&!s.cr[2]&&!s.rd[0]&&!s.rd[1]&&!s.rd[2]){s.co+=30;ch=true;toast(t("loan"))}
+ return ch}
+
+/* ===== Anuncios con recompensa ===== */
+function showAd(cb){
+ if(CFG.ADSGRAM){if(!window.Adsgram){err(t("ad_fail"));return cb(false)}
+  try{window.Adsgram.init({blockId:CFG.ADSGRAM}).show().then(function(r){cb(!!(r&&r.done))}).catch(function(){cb(false)})}catch(e){cb(false)}return}
+ demoAd(cb)}
+function demoAd(cb){var o=$("adv"),n=5,iv;o.classList.add("on");
+ o.innerHTML="<div class='abox'><span class='abdg'>AD · DEMO</span><div class='aico'>"+I("play",30)+"</div><b style='font-size:18px'>"+t("ad_title")+"</b><div class='mu'>"+t("ad_demo")+"</div><div class='aprog'><i id='adp'></i></div><div class='mu' id='adc'>"+t("ad_wait",n)+"</div><div id='adb'><button onclick='adEnd(0)'>"+t("ad_skip")+"</button></div></div>";
+ window._ad=function(ok){clearInterval(iv);o.classList.remove("on");o.innerHTML="";window._ad=null;cb(ok)};
+ setTimeout(function(){var e=$("adp");if(e)e.style.width="100%"},30);
+ iv=setInterval(function(){n--;var c=$("adc");if(!c)return;if(n>0)c.textContent=t("ad_wait",n);else{clearInterval(iv);c.textContent="";$("adb").innerHTML="<button class='g' onclick='adEnd(1)'>"+t("ad_close")+"</button>"}},1000)}
+function adEnd(ok){if(window._ad)window._ad(ok)}
+function boost(){var n=Date.now();if(s.bo>n||s.bc>n)return;showAd(function(ok){if(!ok)return toast(t("ad_none"));if(SRV)return S("boost",null,null,3);var m=Date.now();s.bo=m+120000;s.bc=m+600000;sfx("up");hap("ok");draw()})}
+
+/* ===== Ruleta ===== */
+var PZ=[{k:"c1",ic:"coins",c:"#3b82f6",w:22},{k:"c2",ic:"coins",c:"#8b5cf6",w:14},{k:"jk",ic:"crown",c:"#f59e0b",w:3},{k:"pt",ic:"star",c:"#ec4899",w:16},{k:"cl",ic:"flame",c:"#14b8a6",w:14},{k:"vp",ic:"zap",c:"#6366f1",w:10},{k:"sh",ic:"shield",c:"#10b981",w:8},{k:"no",ic:"x",c:"#64748b",w:13}];
+function pv(k){return k=="c1"?Math.round(rent()*.6):k=="c2"?Math.round(rent()*1.6):k=="jk"?Math.round(rent()*5):k=="pt"?30:0}
+function pl(k){return k=="c1"||k=="c2"||k=="jk"?"+"+fmt(pv(k)):k=="pt"?"+30":k=="cl"?"−40":k=="vp"?(L()=="en"?"×1.4":"×1,4"):""}
+function buildWheel(){var h="",r="<circle r='100' fill='none' stroke='#ffd45e' stroke-width='7'/>";
+ for(var i=0;i<8;i++){var a0=(i*45-90)*Math.PI/180,a1=((i+1)*45-90)*Math.PI/180,c=i*45+22.5,z=PZ[i];
+  h+="<path d='M0 0L"+(Math.cos(a0)*96).toFixed(2)+" "+(Math.sin(a0)*96).toFixed(2)+"A96 96 0 0 1 "+(Math.cos(a1)*96).toFixed(2)+" "+(Math.sin(a1)*96).toFixed(2)+"Z' fill='"+z.c+"' stroke='rgba(255,255,255,.4)' stroke-width='1.5'/>";
+  h+="<g transform='rotate("+c+")'><g transform='translate(-8.5,-82) scale(.71)' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'>"+IC[z.ic]+"</g><text y='-52' text-anchor='middle' fill='#fff' font-size='12' font-weight='800'>"+pl(z.k)+"</text></g>"}
+ for(var j=0;j<16;j++){var a=j*22.5*Math.PI/180;r+="<circle class='led' cx='"+(Math.sin(a)*100).toFixed(1)+"' cy='"+(-Math.cos(a)*100).toFixed(1)+"' r='2'/>"}
+ $("wh").innerHTML=h;$("rim").innerHTML=r}
+function pick(){var r=Math.random()*100,a=0;for(var i=0;i<8;i++){a+=PZ[i].w;if(r<a)return i}return 7}
+function spin(ad){if(spinning)return;var n=Date.now();
+ if(!ad){if(n<s.sp)return;if(SRV)return spinSrv(0);go2(0)}else{chk();if(s.dt.sa>=5)return err(t("r_noad"));return showAd(function(ok){if(!ok)return toast(t("ad_none"));if(SRV)return spinSrv(1,3);chk();s.dt.sa++;go2(1)})}}
+function go2(ad,fi){spinning=true;if(!ad&&!SRV)s.sp=Date.now()+8*3600*1000;
+ var i=fi==null?pick():fi,c=i*45+22.5+(Math.random()-.5)*28,cur=((s.wr%360)+360)%360,delta=((-c-cur)%360+360)%360,w=$("wrot");s.wr+=1800+delta;
+ $("ww").classList.add("spinning");w.style.transition="transform 4.8s cubic-bezier(.12,.62,.08,1)";w.style.transform="rotate("+s.wr+"deg)";
+ for(var k=1;k<=26;k++)(function(k){setTimeout(function(){sfx("tick")},4700*Math.pow(k/26,1.7))})(k);
+ draw();setTimeout(function(){spinning=false;$("ww").classList.remove("spinning");if(pend){merge(pend);pend=null}award(i)},4900)}
+function award(i){var z=PZ[i],k=z.k,v=pv(k),vp=-1;
+ if(SRV){if(k=="vp")vp=SPV}else if(k=="c1"||k=="c2"||k=="jk"){s.co+=v}else if(k=="pt"){s.pt+=30}else if(k=="cl"){s.ht=Math.max(0,s.ht-40)}
+ else if(k=="vp"){var un=unl();vp=un[Math.floor(Math.random()*un.length)];s.vp=vp;s.vu=Date.now()+90000}else if(k=="sh"){s.sh=1}
+ chk();if(!SRV)s.dt.sp++;var m=t("p_"+k,k=="vp"?P[vp].n:fmt(v));s.lp={k:k,m:m};toast(m);
+ if(k=="no"){sfx("err")}else{sfx(k=="jk"?"up":"coin");hap("ok");spark(innerWidth/2,innerHeight*.4,k=="jk"?40:20,110,[z.c,"#fff","#ffd45e"]);if(k=="jk")coins(innerWidth/2,innerHeight*.4,16)}
+ draw()}
+/* ===== Audio ===== */
+var AC=null,mon=false,mg,sg,mt,CH=[[57,60,64,67],[53,57,60,64],[48,52,55,59],[55,59,62,64]],ci=0;
+function hz(m){return 440*Math.pow(2,(m-69)/12)}
+function mkIR(){var l=Math.floor(AC.sampleRate*2.8),b=AC.createBuffer(2,l,AC.sampleRate);for(var c=0;c<2;c++){var d=b.getChannelData(c);for(var i=0;i<l;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/l,2.6)}return b}
+function ensureAC(){if(AC)return true;try{AC=new(window.AudioContext||window.webkitAudioContext)();mg=AC.createGain();mg.gain.value=0;sg=AC.createGain();sg.gain.value=.8*s.sv;
+ var lp=AC.createBiquadFilter();lp.type="lowpass";lp.frequency.value=1600;var cn=AC.createConvolver();cn.buffer=mkIR();var wet=AC.createGain();wet.gain.value=.6;
+ var dl=AC.createDelay(1),fb=AC.createGain();dl.delayTime.value=.45;fb.gain.value=.35;dl.connect(fb);fb.connect(dl);
+ mg.connect(lp);lp.connect(AC.destination);lp.connect(cn);cn.connect(wet);wet.connect(AC.destination);lp.connect(dl);dl.connect(cn);sg.connect(AC.destination);return true}catch(e){AC=null;return false}}
+function note(m,t0,d,ty,v,det){var o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=hz(m);o.detune.value=det||0;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+d*.4);g.gain.linearRampToValueAtTime(0,t0+d);o.connect(g);g.connect(mg);o.start(t0);o.stop(t0+d+.1)}
+function pluck(m,t0,v){var o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.value=hz(m);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(v,t0+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+2.4);o.connect(g);g.connect(mg);o.start(t0);o.stop(t0+2.5)}
+function seq(){if(!mon||!AC)return;var t0=AC.currentTime+.05,c=CH[ci++%4];c.forEach(function(m){note(m-12,t0,9,"triangle",.06,-6);note(m-12,t0,9,"triangle",.04,7);note(m,t0,9,"sine",.045,0)});
+ for(var i=0;i<7;i++)if(Math.random()>.2)pluck(c[Math.floor(Math.random()*4)]+(Math.random()<.5?12:24),t0+i*1.1+Math.random()*.25,.07);mt=setTimeout(seq,7500)}
+function music(on){try{if(on){if(!ensureAC())return;AC.resume();var n=AC.currentTime;mg.gain.cancelScheduledValues(n);mg.gain.setValueAtTime(mg.gain.value,n);mg.gain.linearRampToValueAtTime(.4*s.mv,n+2.5);clearTimeout(mt);seq()}
+ else if(AC){var n2=AC.currentTime;mg.gain.cancelScheduledValues(n2);mg.gain.setValueAtTime(mg.gain.value,n2);mg.gain.linearRampToValueAtTime(0,n2+1);clearTimeout(mt)}}catch(e){}}
+function blip(f,t0,d,ty,v,f2){var o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(sg);o.start(t0);o.stop(t0+d+.02)}
+function sfx(k){try{if(s.sm||!AC||AC.state!="running")return;var t0=AC.currentTime;
+ if(k=="tap")blip(700,t0,.05,"sine",.05,950);
+ else if(k=="tick")blip(1400,t0,.03,"square",.03,900);
+ else if(k=="pop")blip(420,t0,.12,"sine",.14,760);
+ else if(k=="coin"){blip(988,t0,.1,"triangle",.14);blip(1319,t0+.09,.22,"triangle",.14)}
+ else if(k=="raid"){blip(320,t0,.6,"sawtooth",.12,70);blip(240,t0+.25,.6,"sawtooth",.1,60)}
+ else if(k=="done"){[784,988,1175].forEach(function(f,i){blip(f,t0+i*.11,.3,"sine",.12)})}
+ else if(k=="err")blip(200,t0,.18,"square",.06,140);
+ else if(k=="up"){[523,659,784,1047].forEach(function(f,i){blip(f,t0+i*.08,.25,"triangle",.12)})}
+ else if(k=="ev")blip(440,t0,.25,"sine",.12,330)}catch(e){}}
+document.addEventListener("visibilitychange",function(){if(!AC)return;try{if(document.hidden)AC.suspend();else AC.resume()}catch(e){}});
+
+/* ===== Efectos visuales y táctiles ===== */
+var FC=["#ffc83d","#ffffff","#4aa8ff","#ff6b8a","#4fe3a0","#c07bff"],pdn=false,lt=0;
+function hap(k){if(!s.vb)return;try{var h=TG&&TG.HapticFeedback;if(h){if(k=="err")h.notificationOccurred("error");else if(k=="ok")h.notificationOccurred("success");else h.impactOccurred("light");return}if(navigator.vibrate)navigator.vibrate(k=="err"?[60,40,60]:k=="ok"?20:8)}catch(e){}}
+function shake(){var a=$("app");a.classList.remove("shk");void a.offsetWidth;a.classList.add("shk")}
+function flash(){var f=$("fl");f.classList.remove("on");void f.offsetWidth;f.classList.add("on")}
+function ripple(x,y,ok){for(var k=0;k<2;k++)(function(k){var r=document.createElement("div");r.className="rp"+(k?" r2":"");r.style.left=x+"px";r.style.top=y+"px";if(ok&&!k)r.style.borderColor="rgba(120,255,190,.95)";document.body.appendChild(r);setTimeout(function(){r.remove()},900)})(k)}
+function spark(x,y,n,sp,cols){if(RM())return;cols=cols||FC;for(var i=0;i<n;i++)(function(){var p=document.createElement("div"),c=cols[Math.floor(Math.random()*cols.length)],z=4+Math.random()*5;p.className="pp";p.style.cssText="left:"+x+"px;top:"+y+"px;width:"+z+"px;height:"+z+"px;background:"+c+";box-shadow:0 0 8px "+c;document.body.appendChild(p);var a=Math.random()*6.283,d=(sp||45)*(.5+Math.random());
+ p.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+Math.cos(a)*d+"px),calc(-50% + "+(Math.sin(a)*d+22)+"px)) scale(.2)",opacity:0}],{duration:450+Math.random()*350,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=function(){p.remove()}})()}
+function coins(x,y,n){if(RM())return;for(var i=0;i<n;i++)(function(){var p=document.createElement("div"),dx=(Math.random()-.5)*150,up=50+Math.random()*70;p.className="pp cn";p.style.left=x+"px";p.style.top=y+"px";document.body.appendChild(p);
+ p.animate([{transform:"translate(-50%,-50%) scale(.5)",opacity:1},{transform:"translate(calc(-50% + "+dx*.6+"px),calc(-50% - "+up+"px)) scale(1.1)",opacity:1,offset:.45},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + 50px)) scale(.8)",opacity:0}],{duration:800+Math.random()*400,easing:"ease-out"}).onfinish=function(){p.remove()}})()}
+function fx(m,c,x,y){var d=document.createElement("div");d.className="ft";d.textContent=m;d.style.left=(x==null?LX:x)+"px";d.style.top=(y==null?LY:y)+"px";d.style.color=c||"#fff";document.body.appendChild(d);
+ d.animate([{transform:"translate(-50%,0) scale(.7)",opacity:0},{transform:"translate(-50%,-26px) scale(1.15)",opacity:1,offset:.2},{transform:"translate(-50%,-90px) scale(1)",opacity:0}],{duration:1100,easing:"ease-out"}).onfinish=function(){d.remove()}}
+document.addEventListener("pointerdown",function(e){pdn=true;LX=e.clientX;LY=e.clientY;
+ if(ensureAC()){try{AC.resume()}catch(x){}if(!s.ms&&!mon){mon=true;music(true)}}
+ var b=e.target.closest&&e.target.closest("button"),ok=b&&!b.disabled;
+ ripple(e.clientX,e.clientY,ok);sfx("tap");if(ok)hap("l");spark(e.clientX,e.clientY,ok?10:7,ok?60:45)});
+document.addEventListener("pointermove",function(e){if(!pdn||RM())return;var n=performance.now();if(n-lt<28)return;lt=n;spark(e.clientX,e.clientY,1,14)});
+["pointerup","pointercancel"].forEach(function(n){document.addEventListener(n,function(){pdn=false})});
+
+/* ===== Ajustes ===== */
+function openSet(){rSet();$("sheet").classList.add("on")}
+function closeSet(){$("sheet").classList.remove("on")}
+function swr(ic,title,on,fn,sl){return "<div class='set'><div class='row'><div class='lb'>"+I(ic,20)+" "+title+"</div><button class='sw"+(on?" on":"")+"' role='switch' aria-checked='"+(on?"true":"false")+"' onclick='"+fn+"'></button></div>"+(sl||"")+"</div>"}
+function rng(v,fn){return "<input type='range' min='0' max='100' value='"+Math.round(v*100)+"' oninput='"+fn+"(this.value)'>"}
+function rSet(){$("pn").innerHTML="<div class='row'><b style='font-size:19px'>"+I("gear",22)+" "+t("s_title")+"</b><button class='ib2' onclick='closeSet()' aria-label='"+t("s_close")+"'>"+I("x",18)+"</button></div>"+
+ "<div class='set'><div class='lb'>"+I("globe",20)+" "+t("s_lang")+"</div><div class='seg'>"+LG.map(function(x){return "<button class='"+(L()==x[0]?"on":"")+"' onclick='setLg(\""+x[0]+"\")'>"+x[1]+"</button>"}).join("")+"</div></div>"+
+ swr("music",t("s_music"),!s.ms,"tgM()",rng(s.mv,"volM"))+swr("bell",t("s_sfx"),!s.sm,"tgS()",rng(s.sv,"volS"))+swr("phone",t("s_vib"),s.vb,"tgV()")+swr("book",t("s_tut"),s.tu,"tgT()")}
+function setLg(l){s.lg=l;applyLang();rSet();save()}
+function tgM(){s.ms=s.ms?0:1;mon=!s.ms;music(mon);rSet();save()}
+function volM(v){s.mv=v/100;if(AC&&mon)mg.gain.setTargetAtTime(.4*s.mv,AC.currentTime,.1);save()}
+function tgS(){s.sm=s.sm?0:1;rSet();save();if(!s.sm){ensureAC();sfx("pop")}}
+function volS(v){s.sv=v/100;if(sg)sg.gain.value=.8*s.sv;save();sfx("pop")}
+function tgV(){s.vb=s.vb?0:1;rSet();save();hap("ok")}
+function tgT(){s.tu=s.tu?0:1;if(s.tu)s.ts=0;rSet();draw()}
+
+/* ===== Vistas ===== */
+function applyLang(){document.documentElement.lang=L();document.querySelectorAll("[data-i]").forEach(function(e){e.textContent=t(e.getAttribute("data-i"))});rN();buildWheel();pk="";draw()}
+function applyIcons(){document.querySelectorAll("[data-ic]").forEach(function(e){e.innerHTML=I(e.getAttribute("data-ic"),+e.getAttribute("data-sz")||18)})}
+function rN(){var a=[["flask","n_game"],["wheel","n_wheel"],["gift","n_air"]],h="";a.forEach(function(x,i){h+="<button class='"+(cv==i+1?"on":"")+"' onclick='go("+(i+1)+")'>"+I(x[0],22)+"<span>"+t(x[1])+"</span></button>"});$("nav").innerHTML=h}
+function go(n){cv=n;if(n==3)srvSync();["v1","v2","v3"].forEach(function(id,i){$(id).hidden=(i+1!==n)});rN();window.scrollTo(0,0)}
+function rT(){var e=$("tu");if(!s.tu){e.innerHTML="";return}var i=Math.min(s.ts,4),d="";for(var k=0;k<5;k++)d+="<i class='"+(k<=i?"on":"")+"'></i>";
+ e.innerHTML="<div class='card tut'><div class='row'><b>"+I("book",18)+" "+t("tu_"+(i+1)+"_t")+"</b><span class='mu'>"+t("tu_step",i+1,5)+"</span></div><div style='margin:6px 0 12px;color:#cdd7e8;font-size:14px'>"+t("tu_"+(i+1))+"</div><div class='row'><div class='dots2'>"+d+"</div><div class='row' style='gap:6px'><button onclick='tuSkip()'>"+t("tu_skip")+"</button><button class='g' onclick='tuNext()'>"+(i==4?t("tu_done"):t("tu_next"))+"</button></div></div></div>"}
+function tuNext(){if(s.ts>=4)s.tu=0;else s.ts++;draw()}
+function tuSkip(){s.tu=0;draw()}
+function rB(){var n=Date.now(),b="";
+ if(s.bo>n)b="<span class='st' id='bon' style='color:#ffd45e'></span>";
+ else if(s.bc>n)b="<button disabled id='bcd' style='width:100%'></button>";
+ else b="<button class='y' style='width:100%' onclick='boost()'>"+I("play",18)+" "+t("boost_btn")+"</button>";
+ $("bst").innerHTML="<div class='card'><div class='row'><b>"+I("zap",18,"color:#ffd45e")+" "+t("boost_t")+"</b>"+(s.bo>n?b:"")+"</div><div class='mu' style='margin:4px 0 "+(s.bo>n?0:10)+"px'>"+t("boost_d")+"</div>"+(s.bo>n?"":b)+"</div>"}
+function rW(){var n=Date.now(),fr=n>=s.sp,lf=Math.max(0,5-s.dt.sa);
+ $("rt").innerHTML=I("wheel",22,"color:#ffd45e")+" "+t("r_title");$("rs").textContent=t("r_sub");
+ $("rb").innerHTML="<div class='row btns' style='flex-direction:column;align-items:stretch'>"+(fr?"<button class='g' onclick='spin(0)'>"+I("wheel",18)+" "+t("r_free")+"</button>":"<button disabled id='rwc'></button>")+
+ "<button class='y' "+(lf?"":"disabled")+" onclick='spin(1)'>"+I("play",18)+" "+(lf?t("r_ad",lf):t("r_noad"))+"</button></div>"+
+ (s.lp?"<div class='prize'>"+I("gift",20,"color:#ffd45e")+"<div><div class='mu'>"+t("r_last")+"</div><b>"+s.lp.m+"</b></div></div>":"")+"<div class='mu' style='margin-top:10px;text-align:center'>"+t("r_hint")+"</div>"}
+function fillN(){if(SRV&&s.fl!=null)return s.fl;var ys=ds(new Date(Date.now()-864e5));return s.lc==s.dk?((s.sk-1)%7)+1:(s.lc==ys?s.sk%7:0)}
+function tr(ic,ti,sub,right){return "<div class='tr'><div class='ti'>"+I(ic,20)+"</div><div class='tx'><b>"+ti+"</b><span class='mu'>"+sub+"</span></div>"+right+"</div>"}
+function dnT(){return "<span class='dn'>"+I("check",16)+" "+t("a_done")+"</span>"}
+function clB(id,en){return "<button class='g"+(en?"":" dim")+"' onclick='claim(\""+id+"\")'>"+t("a_claim")+"</button>"}
+function rA(){var d=s.dt,fl=fillN(),dn=!!d.ci,days="",h;
+ for(var k=1;k<=7;k++)days+="<div class='"+(k<=fl?"on":(k==7?"gf":""))+"'>"+(k==7?I("gift",16):k)+"</div>";
+ h="<div class='card'><div class='mu'>"+t("a_sub")+"</div><div class='mu' style='margin-top:10px'>"+t("a_pts")+"</div><span class='big'>"+fmt(s.pt)+"</span></div>";
+ h+="<div class='card'><b>"+I("cal",18,"color:#9db8ff")+" "+t("a_streak")+"</b><div class='days'>"+days+"</div>"+(dn?"<button disabled style='width:100%'>"+t("a_back")+"</button>":"<button class='g' style='width:100%' onclick='checkin()'>"+t("a_cin",fl+1)+"</button>")+"</div>";
+ h+="<div class='card'><b>"+t("a_daily")+"</b><div style='margin-top:6px'>"+
+  tr("play",t("t_ad",d.ad),t("rw_pts",20),d.ad>=3?dnT():"<button class='y' onclick='adTask()'>"+t("go")+"</button>")+
+  tr("coins",t("t_sold"),fmt(Math.min(d.sold,400))+" / 400 · "+t("rw_both",fmt(rent()),25),d.c.sold?dnT():clB("sold",d.sold>=400))+
+  tr("wheel",t("t_spin"),t("rw_pts",15),d.c.sp?dnT():clB("sp",d.sp>=1))+
+  tr("flask",t("t_proc"),Math.min(d.pr,3)+" / 3 · "+t("rw_pts",20),d.c.pr?dnT():clB("pr",d.pr>=3))+"</div></div>";
+ var once="";
+ [["ch","CHANNEL","send","t_ch"],["x","X","link","t_x"]].forEach(function(o){if(!CFG[o[1]])return;var rd=s.rdy[o[0]];once+=tr(o[2],t(o[3]),t("rw_pts",100),s.dn[o[0]]?dnT():(rd?"<button class='g"+(Date.now()>=rd?"":" dim")+"' onclick='claimOnce(\""+o[0]+"\")'>"+t("a_claim")+"</button>":"<button class='y' onclick='openTask(\""+o[0]+"\",\""+o[1]+"\")'>"+t("go")+"</button>"))});
+ if(once)h+="<div class='card'><b>"+t("a_once")+"</b><div style='margin-top:6px'>"+once+"</div></div>";
+ var ms=[[1,100],[3,400],[10,1500]],ml="";
+ ms.forEach(function(m){var id="i"+m[0];ml+=tr("users",t("a_m",m[0]),t("rw_pts",fmt(m[1])),s.dn[id]?dnT():clB(id,s.inv>=m[0]))});
+ var lk=refLink();
+ h+="<div class='card'><div class='row'><b>"+I("users",18,"color:#9db8ff")+" "+t("a_inv")+"</b><span class='mu'>"+t("a_invited",s.inv)+"</span></div><div class='mu' style='margin-top:4px'>"+t("a_inv_d")+"</div>"+
+  (lk?"<div class='lnk'>"+lk+"</div>":"<div class='lnk' style='color:var(--mu)'>"+t("a_nolink")+"</div>")+
+  "<div class='row btns'><button class='g' onclick='shareL()'>"+I("send",16)+" "+t("a_share")+"</button><button onclick='copyL()'>"+I("copy",16)+" "+t("a_copy")+"</button></div><div style='margin-top:8px'>"+ml+"</div></div>";
+ h+="<div class='card'><b>"+t("a_redt")+"</b><div class='mu'>"+t("a_note")+"</div><button disabled style='margin-top:8px;width:100%'>"+t("a_red")+"</button></div>";
+ $("aw").innerHTML=h}
+/* Airdrop: acciones */
+function checkin(){if(SRV)return S("checkin");chk();if(s.dt.ci)return;var d=fillN()+1,ys=ds(new Date(Date.now()-864e5));s.sk=(s.lc==ys)?s.sk+1:1;s.lc=s.dk;s.dt.ci=1;if(d==7)s.sp=0;give(Math.round(rent()*(.5+.25*d)),10*d+(d==7?40:0))}
+function adTask(){chk();if(s.dt.ad>=3)return;showAd(function(ok){if(!ok)return toast(t("ad_none"));if(SRV)return S("adtask",null,null,3);chk();s.dt.ad++;give(0,20)})}
+function claim(id){if(SRV)return S("claim",{id:id});chk();var d=s.dt;
+ if(id=="sold"){if(d.c.sold||d.sold<400)return err(t("wait"));d.c.sold=1;give(rent(),25)}
+ else if(id=="sp"){if(d.c.sp||d.sp<1)return err(t("wait"));d.c.sp=1;give(0,15)}
+ else if(id=="pr"){if(d.c.pr||d.pr<3)return err(t("wait"));d.c.pr=1;give(0,20)}
+ else{if(CFG.BACKEND&&TG&&TG.initData){return api("/api/claim",{id:id},function(r){if(r&&r.ok){s.dn[id]=1;give(0,r.pts)}else if(r)err(t("wait"));else err(t("srv_err"))})}var n=+id.slice(1),r={1:100,3:400,10:1500}[n];if(s.dn[id]||s.inv<n)return err(t("wait"));s.dn[id]=1;give(0,r)}}
+function openL(u){try{if(TG&&/^https:\/\/t\.me\//.test(u)&&TG.openTelegramLink)TG.openTelegramLink(u);else if(TG&&TG.openLink)TG.openLink(u);else window.open(u,"_blank")}catch(e){window.open(u,"_blank")}}
+function openTask(id,key){openL(CFG[key]);s.rdy[id]=Date.now()+6000;setTimeout(draw,6100);draw()}
+function claimOnce(id){var r=s.rdy[id];if(!r||s.dn[id])return;if(Date.now()<r)return err(t("wait"));if(SRV)return S("claim",{id:id});s.dn[id]=1;give(0,100)}
+function uid(){var u=TG&&TG.initDataUnsafe&&TG.initDataUnsafe.user;if(u&&u.id)return String(u.id);if(!s.uid)s.uid=String(Math.floor(Math.random()*9e8+1e8));return s.uid}
+function refLink(){return CFG.BOT?"https://t.me/"+CFG.BOT+(CFG.APP?"/"+CFG.APP:"")+"?startapp=ref_"+uid():""}
+function shareL(){var l=refLink();if(!l)return err(t("a_nolink"));openL("https://t.me/share/url?url="+encodeURIComponent(l)+"&text="+encodeURIComponent(t("a_text")))}
+function copyL(){var l=refLink();if(!l)return err(t("a_nolink"));var ok=function(){toast(t("a_copied"));sfx("pop")};
+ try{navigator.clipboard.writeText(l).then(ok,function(){fb()})}catch(e){fb()}
+ function fb(){try{var a=document.createElement("textarea");a.value=l;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();ok()}catch(e){}}}
+
+/* ===== Pintado principal ===== */
+function jobs(){var n=Date.now(),pr=s.jb.filter(function(j){return j.st==2}),h="",sc=$("sc");$("sl").textContent=t("slots",s.jb.length,s.sl);
+ sc.classList.toggle("on",s.jb.length>0);sc.classList.toggle("proc",pr.length>0);
+ var ld=pr[0]||s.jb[0];
+ if(ld){var q=P[ld.p],tt=(ld.st==1?q.t1:q.t2)*1000,w=Math.max(0,Math.min(1,1-(ld.end-n)/tt));sc.style.setProperty("--k",q.k);$("lv").style.transform="translateY("+(94-38*w).toFixed(1)+"px)"}else $("lv").style.transform="translateY(96px)";
+ $("sct").innerHTML=pr.length?t("st_proc",pr.length)+"<span class='dots'><i></i><i></i><i></i></span>":(s.jb.length?t("st_make"):t("st_idle"));
+ s.jb.forEach(function(j){var q=P[j.p],tot=(j.st==1?q.t1:q.t2)*1000,w=Math.max(0,Math.min(100,(1-(j.end-n)/tot)*100));h+="<div class='mu' style='margin-top:8px'>"+I("gem",14,"color:"+q.k)+" "+q.n+" · "+(j.st==1?t("j_make"):t("j_proc"))+" · "+ft((j.end-n)/1000)+"<div class='bar'><i style='width:"+w+"%;background:"+q.k+"'></i></div></div>"});$("jb").innerHTML=h}
+function hud(){var n=Date.now(),b="";$("ht").style.width=s.ht+"%";$("hc").classList.toggle("hot",s.ht>70);$("rk").textContent=t("risk",Math.round(risk()*100));$("rn").innerHTML=I("home",14)+" "+t("rentin",fmt(rent()),ft((s.rn-n)/1000));
+ P.forEach(function(q,p){var e=$("pr"+p);if(e)e.textContent=t("worth",fmt(price(p)))+(vipm(p)>1?" ★":(s.mp[p]<.95?" ↓":""))});
+ if(s.cx>n)b+="<span class='bad'>"+I("box",14)+t("pl_cost",ft((s.cx-n)/1000))+"</span>";
+ if(s.vu>n&&s.vp>=0)b+="<span class='good'>"+I("crown",14)+t("pl_vip",P[s.vp].n,ft((s.vu-n)/1000))+"</span>";
+ if(s.sh)b+="<span class='good'>"+I("shield",14)+t("pl_sh")+"</span>";
+ if(s.bo>n)b+="<span class='good'>"+I("zap",14)+t("boost_on",ft((s.bo-n)/1000))+"</span>";
+ $("ev").innerHTML=b;
+ var e1=$("bon");if(e1)e1.textContent=t("boost_on",ft((s.bo-n)/1000));var e2=$("bcd");if(e2)e2.innerHTML=I("clock",16)+" "+t("boost_cd",ft((s.bc-n)/1000));var e3=$("rwc");if(e3)e3.innerHTML=I("clock",16)+" "+t("r_wait",ft((s.sp-n)/1000))}
+function draw(){chk();var cxo=s.cx>Date.now();bump("co",s.co);bump("pt",s.pt);var h="";
+ if(lr!==rent()){lr=rent();buildWheel()}
+ P.forEach(function(q,p){var lk=s.tot<q.u,b;
+  if(lk)b="<div class='mu' style='margin-top:6px'>"+I("lock",14)+" "+t("locked",fmt(q.u))+"</div><div class='bar'><i style='width:"+Math.min(100,s.tot/q.u*100)+"%;background:"+q.k+"'></i></div>";
+  else b="<div class='chips'><span>"+I("box",13)+" "+t("toproc")+" <b>"+s.cr[p]+"</b></span><span>"+I("check",13)+" "+t("ready")+" <b>"+s.rd[p]+"</b></span></div>"+qsel(p)+"<div class='row btns'><button class='"+(cxo?"bad":"")+"' onclick='crear("+p+")'>"+t("make",fmt(cost(p)))+"</button><button class='"+(s.cr[p]?"":"dim")+"' onclick='procesar("+p+")'>"+t("process")+"</button><button class='g "+(s.rd[p]?"":"dim")+"' onclick='vender("+p+")'>"+t("sell")+(s.rd[p]?" ("+qty(p)+")":"")+"</button></div>";
+  h+="<div class='card' style='border-color:"+q.k+"55;box-shadow:0 12px 34px rgba(0,0,0,.3),0 0 28px "+q.k+"1a'><div class='row'><b>"+I("gem",18,"color:"+q.k)+" "+q.n+"</b><span class='mu' id='pr"+p+"'></span></div>"+b+"</div>"});
+ $("ps").innerHTML=h;
+ $("up").innerHTML="<div class='card'><b>"+I("zap",18,"color:#ffd45e")+" "+t("upg")+"</b><div class='row' style='margin-top:10px'><span class='lb'>"+I("factory",18)+" "+t("spaces",s.sl)+"</span><button class='y' "+(s.sl>=8?"disabled":"")+" onclick='mejora(\"sl\")'>"+(s.sl>=8?t("max"):fmt(ucost("sl")))+"</button></div><div class='row' style='margin-top:10px'><span class='lb'>"+I("shield",18)+" "+t("security",s.sg)+"</span><button class='y' "+(s.sg>=5?"disabled":"")+" onclick='mejora(\"sg\")'>"+(s.sg>=5?t("max"):fmt(ucost("sg")))+"</button></div><div class='mu' style='margin-top:8px'>"+t("upnote",s.raids)+"</div></div>";
+ rT();rB();rW();rA();jobs();hud();save()}
+function keys(){var n=Date.now();return [s.cx>n,s.bo>n,s.bc>n,n>=s.sp,5-s.dt.sa,s.sh,s.vu>n].join()}
+
+/* ===== Arranque ===== */
+setInterval(function(){var a=econ(1),b=done(),k=keys(),c=k!==pk;pk=k;if(chk())c=true;if(a||b||c)draw();else{jobs();hud();save()}},1000);
+setInterval(function(){if(SRV&&!spinning)S("sync")},6000);
+try{if(TG){TG.ready();TG.expand()}}catch(e){}
+try{var sp=TG&&TG.initDataUnsafe&&TG.initDataUnsafe.start_param;if(sp&&/^ref_\d+$/.test(sp)&&!SRV&&!s.ref&&sp.slice(4)!==uid()){s.ref=sp.slice(4);s.co+=100;setTimeout(function(){toast(t("welcome"))},600)}}catch(e){}
+if(s.nx<Date.now())s.nx=Date.now()+45000;
+$("wrot").style.transform="rotate("+s.wr+"deg)";
+srvSync();applyIcons();pk=keys();econ(Math.min(3600,(Date.now()-s.t)/1000));done();applyLang();
+if(!s.ms&&!s.ref)toast(t("tapm"));
+</script></body></html>
