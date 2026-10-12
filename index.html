@@ -507,7 +507,8 @@ function econ(dt){if(SRV){s.ht=Math.max(0,s.ht-.28*dt);for(var i=0;i<3;i++)s.mp[
  return ch}
 
 /* ===== Anuncios con recompensa ===== */
-function showAd(cb){
+function showAd(cb){if(window.show_12010906){window.show_12010906().then(function(){cb(true)}).catch(function(){err(t("ad_fail"));cb(false)});return}
+
  if(CFG.ADSGRAM){if(!window.Adsgram){err(t("ad_fail"));return cb(false)}
   try{window.Adsgram.init({blockId:CFG.ADSGRAM}).show().then(function(r){cb(!!(r&&r.done))}).catch(function(){cb(false)})}catch(e){cb(false)}return}
  demoAd(cb)}
